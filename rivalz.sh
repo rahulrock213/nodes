@@ -57,7 +57,7 @@ while true; do
         fi
 
         # Установка ноды Rivalz
-        echo 'Установка ноды Rivalz...'
+        echo "Установка ноды Rivalz..."
         npm i -g rivalz-node-cli
 
         # Define the file path
