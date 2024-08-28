@@ -40,7 +40,7 @@ while true; do
 
         # Screen libary
         echo "Установка screen..."
-        if sudo apt-get install screen; then
+        if sudo apt-get install screen -y; then
             echo "Установка screen: Успешно"
         else
             echo "Установка screen: Ошибка"
