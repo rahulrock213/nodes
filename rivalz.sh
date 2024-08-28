@@ -21,7 +21,8 @@ while true; do
     echo "3. Поменять кошелек"
     echo "4. Поменять потребляемое кол-во места диска"
     echo "5. Информация о ноде"
-    echo -e "6. Выйти из скрипта\n"
+    echo "6. Исправить ошибку Running on another..."
+    echo -e "7. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
     
     case $choice in
@@ -128,6 +129,13 @@ while true; do
         rivalz info
         ;;
       6)
+        echo "Начинаю делать исправление..."
+        rm -f /etc/machine-id
+        dbus-uuidgen --ensure=/etc/machine-id
+        cp /etc/machine-id /var/lib/dbus/machine-id
+        echo "Готово!"
+        ;;
+      7)
         exit 0
         ;;
       *)
