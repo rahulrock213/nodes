@@ -18,7 +18,7 @@ while true; do
     case $choice in
       1)
         ;;
-	    2)
+      2)
         exit 0
         ;;
       *)
