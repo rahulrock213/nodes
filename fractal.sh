@@ -14,7 +14,8 @@ while true; do
     echo "1. Установить ноду"
     echo '2. Посмотреть логи'
     echo '3. Посмотреть приватный ключ'
-    echo -e "4. Выйти из скрипта\n"
+    echo '4. Обновить ноду'
+    echo -e "5. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
     
     case $choice in
@@ -83,6 +84,65 @@ EOF
         sleep 5
         ;;
       4)
+        echo "Начинаем обновление скрипта..."
+
+            # Резервное копирование директории data
+            echo "Резервное копирование директории data..."
+            sudo cp -r /root/fractald-0.1.8-x86_64-linux-gnu/data /root/fractal-data-backup
+
+            echo "Удаление прошлой версии..."
+            sudo systemctl stop fractald
+            sudo systemctl disable fractald
+            sudo rm /etc/systemd/system/fractald.service
+            sudo systemctl daemon-reload
+            rm -rf /root/fractald-0.1.8-x86_64-linux-gnu
+
+            # Загрузка новой версии библиотеки fractald
+            echo "Загрузка новой версии библиотеки fractald..."
+            wget https://github.com/fractal-bitcoin/fractald-release/releases/download/v0.2.1/fractald-0.2.1-x86_64-linux-gnu.tar.gz
+
+            # Извлечение новой версии библиотеки fractald
+            echo "Извлечение новой версии библиотеки fractald..."
+            tar -zxvf fractald-0.2.1-x86_64-linux-gnu.tar.gz
+
+            # Переход в директорию новой версии fractald
+            echo "Переход в директорию новой версии fractald..."
+            cd fractald-0.2.1-x86_64-linux-gnu
+
+            # Восстановление данных из резервной копии
+            echo "Восстановление данных из резервной копии..."
+            cp -r /root/fractal-data-backup /root/fractald-0.2.1-x86_64-linux-gnu/
+
+            # Обновление файла службы systemd (если есть изменения)
+            echo "Обновление файла службы systemd..."
+            sudo tee /etc/systemd/system/fractald.service > /dev/null <<EOF
+[Unit]
+Description=Fractal Node
+After=network.target
+[Service]
+User=root
+WorkingDirectory=/root/fractald-0.2.1-x86_64-linux-gnu
+ExecStart=/root/fractald-0.2.1-x86_64-linux-gnu/bin/bitcoind -datadir=/root/fractald-0.2.1-x86_64-linux-gnu/data/ -maxtipage=504576000
+Restart=always
+RestartSec=3
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+            # Перезагрузка конфигурации менеджера systemd
+            echo "Перезагрузка конфигурации менеджера systemd..."
+            sudo systemctl daemon-reload
+
+            # Запуск и установка службы на автозапуск
+            echo "Запуск и включение службы fractald..."
+            sudo systemctl enable fractald
+            sudo systemctl start fractald
+
+            echo "Обновление скрипта завершено."
+        ;;
+      5)
         exit 0
         ;;
       *)
