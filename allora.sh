@@ -12,6 +12,8 @@ download_node() {
   sudo apt update && sudo apt upgrade -y
   sudo apt install -y ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 python3 python3-pip expect
 
+  sudo apt-get install nano
+
   echo 'Docker установка'
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
@@ -177,23 +179,31 @@ keep_download() {
 }
 
 node_reload() {
+  cd basic-coin-prediction-node/
   docker compose down
   docker compose build
   docker compose up -d 
+  cd
 }
 
 check_logs_docker() {
+  cd basic-coin-prediction-node/
   docker compose logs -f
+  cd
 }
 
 check_logs_worker() {
+  cd basic-coin-prediction-node/
   docker compose logs worker
+  cd
 }
 
 update_node() {
+  cd basic-coin-prediction-node/
   docker compose down
   docker compose pull
   docker compose up -d --build
+  cd
 }
 
 exit_from_script() {
