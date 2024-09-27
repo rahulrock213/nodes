@@ -190,6 +190,12 @@ check_logs_worker() {
   docker compose logs worker
 }
 
+update_node() {
+  docker compose down
+  docker compose pull
+  docker compose up -d --build
+}
+
 exit_from_script() {
   exit 0
 }
@@ -203,7 +209,8 @@ while true; do
     echo "3. Перезапустить ноду"
     echo "4. Проверить логи ноды"
     echo "5. Проверить логи воркера"
-    echo -e "6. Выйти из скрипта\n"
+    echo "6. Обновить версию ноды"
+    echo -e "7. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -223,6 +230,9 @@ while true; do
         check_logs_worker
         ;;
       6)
+        update_node
+        ;;
+      7)
         exit_from_script
         ;;
       *)
