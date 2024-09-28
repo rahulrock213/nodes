@@ -202,7 +202,8 @@ update_node() {
   cd basic-coin-prediction-node/
   docker compose down
   docker compose pull
-  docker compose up -d --build
+  docker compose build
+  docker compose up -d
   cd
 }
 
