@@ -109,11 +109,11 @@ keep_download() {
   # Prompt for TIMEFRAME based on the training days
   echo "Выберите таймфрейм для TRAINING_DAYS:"
   if [[ $training_days -le 2 ]]; then
-    echo "Use a TIMEFRAME of >= 30min"
+    echo "Лучше использовать таймфрейм от >= 30min"
   elif [[ $training_days -le 30 ]]; then
-    echo "Use a TIMEFRAME of >= 4h"
+    echo "Лучше использовать таймфрейм от >= 4h"
   else
-    echo "Use a TIMEFRAME of >= 4d"
+    echo "Лучше использовать таймфрейм от >= 4d"
   fi
   read -p "Выберите таймфрейм (Выберите:, 30min, 4h, 4d): " timeframe
   update_env "TIMEFRAME" "$timeframe"
