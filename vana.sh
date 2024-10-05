@@ -40,9 +40,19 @@ download_node() {
   echo 'Сохраните пароль в надежном месте, как и сид фразы, отмеченные желтым текстом'
   echo '!!! ЭТО ВАЖНО !!!'
 
-  sleep 30
+  read -p "Как прочтете, введите что-нибудь: " inputsmth
 
   vanacli wallet create --wallet.name default --wallet.hotkey default
+
+  sleep 1
+
+  vanacli wallet export_private_key
+
+  sleep 1
+
+  vanacli wallet export_private_key
+
+  sleep 1
 
   echo 'Следуйте дальше инструкции по гайду'
 }
@@ -66,7 +76,7 @@ download_validator() {
   echo 'Сохраните данный публичный ключ в надежном месте'
   cat /root/vana-dlp-chatgpt/public_key_base64.asc
   
-  sleep 30
+  read -p "Как сохраните, введите что-нибудь: " inputsmthhh
   
   cd
   cd vana-dlp-chatgpt
