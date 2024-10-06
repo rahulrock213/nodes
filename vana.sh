@@ -16,25 +16,40 @@ download_node() {
   sudo apt-get install git -y
   sudo apt install unzip
   sudo apt install nano
+
+  sudo apt-get install git -y
+  pip install poetry==1.8.2
+
   sudo apt install software-properties-common -y
   sudo add-apt-repository ppa:deadsnakes/ppa
-  sudo apt update
-  sudo apt install python3.12 -y
-  sudo apt install python3-pip python3-venv curl -y
-  curl -sSL https://install.python-poetry.org | python3 -
-  export PATH="$HOME/.local/bin:$PATH"
-  source ~/.bashrc
-  curl -fsSL https://fnm.vercel.app/install | bash
-  source ~/.bashrc
-  fnm use --install-if-missing 22
-  apt-get install nodejs -y
-  npm install -g yarn
+
+  sudo apt update -y
+  sudo apt install -y python3.12
+
+  sudo apt install python3.12-venv
+  python3.12 -m venv env
+  source env/bin/activate
 
   git clone https://github.com/vana-com/vana-dlp-chatgpt.git
   cd vana-dlp-chatgpt
   cp .env.example .env
+
   poetry install
-  pip install vana
+
+  sudo apt install gcc
+  sudo apt install build-essential
+
+  sudo apt update -y
+  sudo apt install python3-dev
+  sudo apt install libpython3.12-dev
+  sudo apt install python3-devel
+  sudo apt-get install libevent-dev
+  sudo apt update -y
+  pip wheel --no-cache-dir --use-pep517 "lru-dict (==1.2.0)"
+
+  poetry install
+
+  pip install vana --break-system-packages
 
   echo 'Придумайте пароль для двух кошельков который у вас сейчас будут на экране'
   echo 'Сохраните пароль в надежном месте, как и сид фразы, отмеченные желтым текстом'
@@ -74,7 +89,7 @@ deploy_dlp() {
 
 download_validator() {
   echo 'Сохраните данный публичный ключ в надежном месте'
-  cat /root/vana-dlp-chatgpt/public_key_base64.asc
+  cat /root/vana-dlp-chatgpt/private_key_base64.asc
   
   read -p "Как сохраните, введите что-нибудь: " inputsmthhh
   
@@ -82,7 +97,7 @@ download_validator() {
   cd vana-dlp-chatgpt
   nano .env
 
-  sleep 1
+  sleep 2
 
   read -p "Введите ваш хоткей адрес из MetaMask (0x...): " validator_address
 
