@@ -17,6 +17,7 @@ download_node() {
   sudo apt install unzip
   sudo apt install nano
 
+  sudo apt-get install screen
   sudo apt-get install git -y
   pip install poetry==1.8.2
 
@@ -49,7 +50,7 @@ download_node() {
 
   poetry install
 
-  pip install vana --break-system-packages
+  pip install vana
 
   echo 'Придумайте пароль для двух кошельков который у вас сейчас будут на экране'
   echo 'Сохраните пароль в надежном месте, как и сид фразы, отмеченные желтым текстом'
@@ -73,8 +74,9 @@ download_node() {
 }
 
 deploy_dlp() {
+  source env/bin/activate
+
   cd $HOME
-  rm -rf vana-dlp-smart-contracts
   git clone https://github.com/Josephtran102/vana-dlp-smart-contracts
   cd vana-dlp-smart-contracts
   
@@ -92,6 +94,8 @@ deploy_dlp() {
 }
 
 download_validator() {
+  source env/bin/activate
+
   echo 'Сохраните данный публичный ключ в надежном месте'
   cat /root/vana-dlp-chatgpt/private_key_base64.asc
   
@@ -103,15 +107,25 @@ download_validator() {
 
   sleep 2
 
+  pip install vana
+
   read -p "Введите ваш hotkey адрес из MetaMask (0x...): " validator_address
 
   ./vanacli dlp register_validator --stake_amount 10
   ./vanacli dlp approve_validator --validator_address=$validator_address
 
+  screen -S vananode
+
+  cd
+  source env/bin/activate
+  cd vana-dlp-chatgpt
+
   poetry run python -m chatgpt.nodes.validator
 }
 
 service_start() {
+  source env/bin/activate
+
   poetry_path=$(which poetry)
 
   sudo tee /etc/systemd/system/vana.service << EOF
@@ -140,6 +154,8 @@ EOF
 }
 
 check_logs() {
+  source env/bin/activate
+
   sudo journalctl -u vana.service -f
 }
 
