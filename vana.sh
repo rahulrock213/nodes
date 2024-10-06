@@ -77,6 +77,10 @@ deploy_dlp() {
   rm -rf vana-dlp-smart-contracts
   git clone https://github.com/Josephtran102/vana-dlp-smart-contracts
   cd vana-dlp-smart-contracts
+  
+  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+  apt-get install nodejs -y
+  
   npm install -g yarn
   yarn install
   cp .env.example .env
@@ -99,7 +103,7 @@ download_validator() {
 
   sleep 2
 
-  read -p "Введите ваш хоткей адрес из MetaMask (0x...): " validator_address
+  read -p "Введите ваш hotkey адрес из MetaMask (0x...): " validator_address
 
   ./vanacli dlp register_validator --stake_amount 10
   ./vanacli dlp approve_validator --validator_address=$validator_address
