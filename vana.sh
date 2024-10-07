@@ -65,13 +65,22 @@ download_node() {
 
   vanacli wallet export_private_key
 
-  sleep 1
+  echo 'Повторяете еще раз, но уже с другими данными (смотрите гайд)'
+
+  sleep 5
 
   vanacli wallet export_private_key
 
   sleep 1
 
   echo 'Следуйте дальше инструкции по гайду'
+}
+
+create_keys() {
+  source env/bin/activate
+
+  cd vana-dlp-chatgpt
+  ./keygen.sh
 }
 
 deploy_dlp() {
@@ -169,11 +178,12 @@ while true; do
     sleep 2
     echo -e "\n\nМеню:"
     echo "1. Начать установку ноды"
-    echo '2. Деплой DLP'
-    echo '3. Установка валидатора'
-    echo '4. Установить фоновый сервис'
-    echo '5. Проверить логи'
-    echo -e "6. Выйти из скрипта\n"
+    echo '2. Создать ключи для DLP'
+    echo '3. Установка DLP'
+    echo '4. Установка валидатора'
+    echo '5. Установить фоновый сервис'
+    echo '6. Проверить логи'
+    echo -e "7. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -181,18 +191,21 @@ while true; do
         download_node
         ;;
       2)
-        deploy_dlp
+        create_keys
         ;;
       3)
-        download_validator
+        deploy_dlp
         ;;
       4)
-        service_start
+        download_validator
         ;;
       5)
-        check_logs
+        service_start
         ;;
       6)
+        check_logs
+        ;;
+      7)
         exit_from_script
         ;;
       *)
