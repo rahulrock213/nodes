@@ -39,6 +39,7 @@ download_node() {
 
   sudo apt install gcc
   sudo apt install build-essential
+  python -m pip install python-dotenv
 
   sudo apt update -y
   sudo apt install python3-dev
