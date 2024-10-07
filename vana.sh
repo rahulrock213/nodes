@@ -106,7 +106,7 @@ deploy_dlp() {
 download_validator() {
   source env/bin/activate
 
-  echo 'Сохраните данный публичный ключ в надежном месте'
+  echo -e 'Сохраните данный публичный ключ в надежном месте\n\n'
   cat /root/vana-dlp-chatgpt/private_key_base64.asc
   
   read -p "Как сохраните, введите что-нибудь: " inputsmthhh
