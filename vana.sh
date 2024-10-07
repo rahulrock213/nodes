@@ -106,7 +106,7 @@ deploy_dlp() {
 download_validator() {
   source env/bin/activate
 
-  echo -e 'Сохраните данный публичный ключ в надежном месте\n\n'
+  echo -e 'Сохраните данный приватный ключ в надежном месте\n\n'
   cat /root/vana-dlp-chatgpt/private_key_base64.asc
   
   read -p "Как сохраните, введите что-нибудь: " inputsmthhh
@@ -122,13 +122,20 @@ download_validator() {
   read -p "Введите ваш hotkey адрес из MetaMask (0x...): " validator_address
 
   ./vanacli dlp register_validator --stake_amount 10
+
+  sleep 1
+  
   ./vanacli dlp approve_validator --validator_address=$validator_address
+
+  sleep 1
 
   screen -S vananode
 
   cd
   source env/bin/activate
   cd vana-dlp-chatgpt
+
+  sleep 1
 
   poetry run python -m chatgpt.nodes.validator
 }
