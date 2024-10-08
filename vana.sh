@@ -17,9 +17,8 @@ download_node() {
   sudo apt install unzip
   sudo apt install nano
 
-  sudo apt-get install screen
+  sudo apt-get install screen -y
   sudo apt-get install git -y
-  pip install poetry==1.8.2
 
   sudo apt install software-properties-common -y
   sudo add-apt-repository ppa:deadsnakes/ppa
@@ -35,20 +34,19 @@ download_node() {
   cd vana-dlp-chatgpt
   cp .env.example .env
 
-  poetry install
-
   sudo apt install gcc
   sudo apt install build-essential
   python -m pip install python-dotenv
 
   sudo apt update -y
-  sudo apt install python3-dev
-  sudo apt install libpython3.12-dev
-  sudo apt install python3-devel
+  sudo apt install python3-dev - y
+  sudo apt install libpython3.12-dev -y
+  sudo apt install python3-devel -y
   sudo apt-get install libevent-dev
   sudo apt update -y
   pip wheel --no-cache-dir --use-pep517 "lru-dict (==1.2.0)"
 
+  pip install poetry==1.8.2
   poetry install
 
   pip install vana
