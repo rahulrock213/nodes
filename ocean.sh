@@ -156,6 +156,8 @@ EOF
 
   # Starting a node
   docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
+
+  sleep(15)
 }
 
 exit_from_script() {
