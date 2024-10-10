@@ -165,7 +165,7 @@ keep_download() {
   sed -i "s/your_node_id/$nodeID/g" .env
 
   container_id=$(docker ps -aqf "status=Excited")
-  docker rm "$container_id"
+  docker rm $container_id
 
   docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
 }
