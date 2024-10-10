@@ -156,8 +156,18 @@ EOF
 
   # Starting a node
   docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
+}
 
-  sleep(15)
+keep_download() {
+  read -p "Введите ваш nodeID: " nodeID
+
+  sed -i "s/YOUR_NODE_ID/$nodeID/g" .env
+  sed -i "s/your_node_id/$nodeID/g" .env
+
+  container_id=$(docker ps -aqf "status=Excited")
+  docker rm "$container_id"
+
+  docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
 }
 
 exit_from_script() {
@@ -169,7 +179,8 @@ while true; do
     sleep 2
     echo -e "\n\nМеню:"
     echo "1. Установить ноду"
-    echo -e "2. Выйти из скрипта\n"
+    echo "2. Продолжить установку ноды"
+    echo -e "3. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -177,6 +188,9 @@ while true; do
         download_node
         ;;
       2)
+        keep_download
+        ;;
+      3)
         exit_from_script
         ;;
       *)
