@@ -174,7 +174,7 @@ keep_download() {
 
 check_logs() {
   logs_to_check=$(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
-  docker logs $logs_to_check
+  docker logs $logs_to_check -f
 }
 
 exit_from_script() {
