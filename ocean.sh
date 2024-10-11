@@ -159,6 +159,8 @@ EOF
 }
 
 keep_download() {
+  echo -e 'Если вы выдруг забыли свой nodeID (peerID), то вводите в браузере http://АЙПИ_ВАШЕГО_СЕРВЕРА:8000/dashboard и ищите ваш nodeID\n'
+
   read -p "Введите ваш nodeID: " nodeID
 
   cd
