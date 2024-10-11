@@ -172,6 +172,11 @@ keep_download() {
   docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
 }
 
+check_logs() {
+  logs_to_check=$(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+  docker logs $logs_to_check
+}
+
 exit_from_script() {
   exit 0
 }
@@ -182,7 +187,8 @@ while true; do
     echo -e "\n\nМеню:"
     echo "1. Установить ноду"
     echo "2. Продолжить установку ноды"
-    echo -e "3. Выйти из скрипта\n"
+    echo "3. Посмотреть логи"
+    echo -e "4. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -193,6 +199,9 @@ while true; do
         keep_download
         ;;
       3)
+        check_logs
+        ;;
+      4)
         exit_from_script
         ;;
       *)
