@@ -162,7 +162,6 @@ keep_download() {
   read -p "Введите ваш nodeID: " nodeID
 
   sed -i "s/YOUR_NODE_ID/$nodeID/g" .env
-  sed -i "s/your_node_id/$nodeID/g" .env
 
   container_id=$(docker ps -aqf "status=Excited")
   docker rm $container_id
