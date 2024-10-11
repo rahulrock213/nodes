@@ -161,6 +161,9 @@ EOF
 keep_download() {
   read -p "Введите ваш nodeID: " nodeID
 
+  cd
+  cd ocean-node/
+
   sed -i "s/YOUR_NODE_ID/$nodeID/g" .env
 
   container_id=$(docker ps -aqf "status=Excited")
