@@ -164,7 +164,7 @@ keep_download() {
   cd
   cd ocean-node/
 
-  sed -i "s/YOUR_NODE_ID/$nodeID/g" .env
+  sed -i "s/YOUR_NODE_ID_HERE/$nodeID/g" .env
 
   container_id=$(docker ps -aqf "status=Excited")
   docker rm $container_id
