@@ -22,7 +22,8 @@ while true; do
     echo "4. Поменять потребляемое кол-во места диска"
     echo "5. Информация о ноде"
     echo "6. Исправить ошибку Running on another..."
-    echo -e "7. Выйти из скрипта\n"
+    echo "7. Удалить ноду"
+    echo -e "8. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
     
     case $choice in
@@ -136,6 +137,9 @@ while true; do
         echo "Готово!"
         ;;
       7)
+        sudo npm uninstall -g rivalz-node-cli
+        ;;
+      8)
         exit 0
         ;;
       *)
