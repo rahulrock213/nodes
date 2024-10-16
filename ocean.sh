@@ -136,7 +136,7 @@ P2P_ipV4BindWsPort=9001
 P2P_ipV6BindAddress=::
 P2P_ipV6BindTcpPort=9002
 P2P_ipV6BindWsPort=9003
-P2P_ANNOUNCE_ADDRESSES=["/dns4/$SERVER_IP/tcp/9000/p2p/YOUR_NODE_ID_HERE", "/dns4/$SERVER_IP/ws/tcp/9001", "/dns6/$SERVER_IP/tcp/9002/p2p/YOUR_NODE_ID_HERE", "/dns6/$SERVER_IP/ws/tcp/9003"]
+P2P_ANNOUNCE_ADDRESSES=["/ip4/$SERVER_IP/tcp/9000", "/ip4/$SERVER_IP/ws/tcp/9001"]
 P2P_ANNOUNCE_PRIVATE=
 P2P_pubsubPeerDiscoveryInterval=
 P2P_dhtMaxInboundStreams=
@@ -176,7 +176,13 @@ keep_download() {
 
 check_logs() {
   logs_to_check=$(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
-  docker logs $logs_to_check -f
+  docker logs $logs_to_check --tail 300 -f
+}
+
+restart_containers() {
+  docker stop $(docker ps -a -q)
+  sleep 1
+  docker start $(docker ps -a -q)
 }
 
 exit_from_script() {
@@ -190,7 +196,8 @@ while true; do
     echo "1. Установить ноду"
     echo "2. Продолжить установку ноды"
     echo "3. Посмотреть логи"
-    echo -e "4. Выйти из скрипта\n"
+    echo "4. Перезапустить ноду"
+    echo -e "5. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -204,6 +211,9 @@ while true; do
         check_logs
         ;;
       4)
+        restart_containers
+        ;;
+      5)
         exit_from_script
         ;;
       *)
