@@ -180,9 +180,11 @@ check_logs() {
 }
 
 restart_containers() {
-  docker stop $(docker ps -a -q)
+  docker stop $(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+  docker stop $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
   sleep 1
-  docker start $(docker ps -a -q)
+  docker start $(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+  docker start $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
 }
 
 exit_from_script() {
