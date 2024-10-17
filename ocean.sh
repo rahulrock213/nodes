@@ -187,6 +187,46 @@ restart_containers() {
   docker start $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
 }
 
+fix_peer() {
+  read -p "Введите ваш nodeID (peerID): " value_node
+
+  url="https://incentive-backend.oceanprotocol.com/nodes?page=1&size=10&search=$value_node"
+
+  while true; do
+    response=$(curl -s "$url")
+
+    if [[ $? -ne 0 ]]; then
+      echo "Ошибка при запросе к API: $(curl -s -w '%{http_code}' -o /dev/null "$url")"
+      sleep 30
+      continue
+    fi
+
+    eligible=$(jq -r '.nodes[0]._source.eligible' <<< "$response")
+
+    if [[ $? -ne 0 ]]; then
+      echo "Ошибка при обработке JSON: $(jq -r '.nodes[0]._source.eligible' <<< "$response")"
+      sleep 30
+      continue
+    fi
+
+
+    if [[ "$eligible" == "false" ]]; then
+      echo "eligible is false. Выполняем действия..."
+
+      docker stop $(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+      docker stop $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
+      sleep 1
+      docker start $(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+      docker start $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
+
+      echo "Выполнились"
+    fi
+
+
+    sleep 7200  # 2 hours
+  done
+}
+
 exit_from_script() {
   exit 0
 }
@@ -199,7 +239,8 @@ while true; do
     echo "2. Продолжить установку ноды"
     echo "3. Посмотреть логи"
     echo "4. Перезапустить ноду"
-    echo -e "5. Выйти из скрипта\n"
+    echo "5. Запустить скрипт по авто-перезапуску"
+    echo -e "6. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -216,6 +257,9 @@ while true; do
         restart_containers
         ;;
       5)
+        fix_peer
+        ;;
+      6)
         exit_from_script
         ;;
       *)
