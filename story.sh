@@ -143,6 +143,29 @@ final_download() {
   sudo systemctl restart story story-geth
 }
 
+check_sync() {
+  rpc_port=$(grep -m 1 -oP '^laddr = "\K[^"]+' "$HOME/.story/story/config/config.toml" | cut -d ':' -f 3)
+  while true; do
+    local_height=$(curl -s localhost:$rpc_port/status | jq -r '.result.sync_info.latest_block_height')
+    network_height=$(curl -s https://story-testnet-rpc.itrocket.net/status | jq -r '.result.sync_info.latest_block_height')
+
+    if ! [[ "$local_height" =~ ^[0-9]+$ ]] || ! [[ "$network_height" =~ ^[0-9]+$ ]]; then
+      echo -e "\033[1;31mОшибка при проверке данных. Повтор...\033[0m"
+      sleep 5
+      continue
+    fi
+
+    blocks_left=$((network_height - local_height))
+    if [ "$blocks_left" -lt 0 ]; then
+      blocks_left=0
+    fi
+
+    echo -e "\033[1;36mБлоков до синхронизации:\033[1;32m $blocks_left\033[0m"
+
+    sleep 5
+  done
+}
+
 export_wallet() {
   cat /root/.story/story/config/private_key.txt
 
@@ -168,10 +191,11 @@ while true; do
     echo "1. Установить библиотеки"
     echo "2. Установить ноду"
     echo "3. Продолжить установку"
-    echo "4. Экспорт кошелька"
-    echo "5. Создать валидатора"
-    echo "6. Посмотреть логи"
-    echo -e "7. Выйти из скрипта\n"
+    echo "4"
+    echo "5. Экспорт кошелька"
+    echo "6. Создать валидатора"
+    echo "7. Посмотреть логи"
+    echo -e "8. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -185,15 +209,18 @@ while true; do
         final_download
         ;;
       4)
-        export_wallet
+        check_sync
         ;;
       5)
-        create_validator
+        export_wallet
         ;;
       6)
-        check_logs
+        create_validator
         ;;
       7)
+        check_logs
+        ;;
+      8)
         exit_from_script
         ;;
       *)
