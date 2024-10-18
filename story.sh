@@ -10,7 +10,7 @@ channel_logo() {
 download_node() {
   echo 'Начинаю установку...'
 
-  sudo apt-get update -y && sudo apt upgrade -y && sudo apt-get install make build-essential screen unzip lz4 gcc git jq -y
+  sudo apt-get update -y && sudo apt upgrade -y && sudo apt-get install make build-essential nano screen unzip lz4 gcc git jq -y
 
   screen -S storynode
 }
@@ -107,16 +107,36 @@ EOF
   cp $HOME/.story/story/data/priv_validator_state.json $HOME/.story/story/priv_validator_state.json.backup
 
   rm -rf $HOME/.story/story/data
+
+  read -p "Скопируйте ПЕРВУЮ (!) актуальную ссылку на snapshot ноды по ссылке из гайда (curl https...): " snapshot_first_link
+
+  if [[ "$snapshot_first_link" =~ ^curl ]]; then
+    if grep -q 'https' <<< "$snapshot_first_link"; then
+      echo "$snapshot_first_link"
+    else
+      echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
+    fi
+  else
+    echo "Неверный формат ссылки. Ссылка должна начинаться с 'curl'"
+  fi
 }
 
 final_download() {
-  screen -r storynode
-
   mv $HOME/.story/story/priv_validator_state.json.backup $HOME/.story/story/data/priv_validator_state.json
   rm -rf $HOME/.story/geth/iliad/geth/chaindata
   mkdir -p $HOME/.story/geth/iliad/geth
 
-  
+  read -p "Скопируйте ВТОРУЮ (!!!) актуальную ссылку на snapshot ноды по ссылке из гайда (curl https...): " snapshot_second_link
+
+  if [[ "$snapshot_second_link" =~ ^curl ]]; then
+    if grep -q 'https' <<< "$snapshot_second_link"; then
+      echo "$snapshot_second_link"
+    else
+      echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
+    fi
+  else
+    echo "Неверный формат ссылки. Ссылка должна начинаться с 'curl'"
+  fi
 
   sudo systemctl daemon-reload
   sudo systemctl enable story story-geth
