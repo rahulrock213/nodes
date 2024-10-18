@@ -116,6 +116,11 @@ final_download() {
   rm -rf $HOME/.story/geth/iliad/geth/chaindata
   mkdir -p $HOME/.story/geth/iliad/geth
 
+  
+
+  sudo systemctl daemon-reload
+  sudo systemctl enable story story-geth
+  sudo systemctl restart story story-geth
 }
 
 export_wallet() {
@@ -140,8 +145,13 @@ while true; do
     channel_logo
     sleep 2
     echo -e "\n\nМеню:"
-    echo "1. Установить ноду"
-    echo -e "2. Выйти из скрипта\n"
+    echo "1. Установить библиотеки"
+    echo "2. Установить ноду"
+    echo "3. Продолжить установку"
+    echo "4. Экспорт кошелька"
+    echo "5. Создать валидатора"
+    echo "6. Посмотреть логи"
+    echo -e "7. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -149,6 +159,21 @@ while true; do
         download_node
         ;;
       2)
+        keep_download
+        ;;
+      3)
+        final_download
+        ;;
+      4)
+        export_wallet
+        ;;
+      5)
+        create_validator
+        ;;
+      6)
+        check_logs
+        ;;
+      7)
         exit_from_script
         ;;
       *)
