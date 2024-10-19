@@ -130,11 +130,11 @@ final_download() {
 
   read -p "Скопируйте ВТОРУЮ (!!!) актуальную ссылку на snapshot ноды по ссылке из гайда (curl https...): " snapshot_second_link
 
-   curl_command=$(echo "$snapshot_second_link")
+  curl_command_second=$(echo "$snapshot_second_link")
 
   if [[ "$snapshot_second_link" =~ ^curl ]]; then
     if grep -q 'https' <<< "$snapshot_second_link"; then
-      eval "$snapshot_second_link"
+      eval "$curl_command_second"
     else
       echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
     fi
