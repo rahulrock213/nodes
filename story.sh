@@ -112,7 +112,7 @@ EOF
 
   if [[ "$snapshot_first_link" =~ ^curl ]]; then
     if grep -q 'https' <<< "$snapshot_first_link"; then
-      echo "$snapshot_first_link"
+      echo $snapshot_first_link
     else
       echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
     fi
@@ -130,7 +130,7 @@ final_download() {
 
   if [[ "$snapshot_second_link" =~ ^curl ]]; then
     if grep -q 'https' <<< "$snapshot_second_link"; then
-      echo "$snapshot_second_link"
+      echo $snapshot_second_link
     else
       echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
     fi
