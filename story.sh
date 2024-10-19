@@ -110,9 +110,11 @@ EOF
 
   read -p "Скопируйте ПЕРВУЮ (!) актуальную ссылку на snapshot ноды по ссылке из гайда (curl https...): " snapshot_first_link
 
+  curl_command=$(echo "$snapshot_first_link")
+
   if [[ "$snapshot_first_link" =~ ^curl ]]; then
     if grep -q 'https' <<< "$snapshot_first_link"; then
-      echo $(snapshot_first_link)
+      eval "$curl_command"
     else
       echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
     fi
@@ -128,9 +130,11 @@ final_download() {
 
   read -p "Скопируйте ВТОРУЮ (!!!) актуальную ссылку на snapshot ноды по ссылке из гайда (curl https...): " snapshot_second_link
 
+   curl_command=$(echo "$snapshot_second_link")
+
   if [[ "$snapshot_second_link" =~ ^curl ]]; then
     if grep -q 'https' <<< "$snapshot_second_link"; then
-      echo $(snapshot_second_link)
+      eval "$snapshot_second_link"
     else
       echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
     fi
