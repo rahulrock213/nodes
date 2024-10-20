@@ -171,9 +171,11 @@ check_sync() {
 }
 
 export_wallet() {
-  cat /root/.story/story/config/private_key.txt
-
   story validator export --export-evm-key
+
+  sleep 1
+
+  cat /root/.story/story/config/private_key.txt
 }
 
 create_validator() {
