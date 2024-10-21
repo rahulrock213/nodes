@@ -111,14 +111,10 @@ while true; do
         # Replace the original file with the modified one
         mv "$TMP_FILE" "$FILE"
         ;;
-	    2)
-	      echo "Начинаю обновление ноды..."
-	      if rivalz update-version; then
-            echo "Обновление ноды: Успешно"
-        else
-            echo "Обновление ноды: Ошибка"
-            exit 1
-        fi
+      2)
+        npm i -g rivalz-node-cli@2.6.2
+
+        rivalz run
         ;;
       3)
         rivalz change-wallet
