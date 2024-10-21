@@ -227,6 +227,21 @@ fix_peer() {
   done
 }
 
+reinstall_node() {
+  read -p "Вы уверены? (CTRL+C чтобы выйти): " checkjust
+
+  docker stop $(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+  docker stop $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
+
+  cd $HOME
+
+  sudo rm -r ocean-node/
+  sudo rm -r typesense-data/
+
+  docker rm $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
+  docker rm $(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+}
+
 exit_from_script() {
   exit 0
 }
@@ -240,7 +255,8 @@ while true; do
     echo "3. Посмотреть логи"
     echo "4. Перезапустить ноду"
     echo "5. Запустить скрипт по авто-перезапуску"
-    echo -e "6. Выйти из скрипта\n"
+    echo "6. Удалить ноду"
+    echo -e "7. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -260,6 +276,9 @@ while true; do
         fix_peer
         ;;
       6)
+        reinstall_node
+        ;;
+      7)
         exit_from_script
         ;;
       *)
