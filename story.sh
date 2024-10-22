@@ -16,8 +16,6 @@ download_node() {
 }
 
 keep_download() {
-  cd $HOME
-  
   sudo rm -rf /usr/local/go
   
   curl -Ls https://go.dev/dl/go1.23.1.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
