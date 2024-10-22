@@ -17,15 +17,10 @@ download_node() {
 
 keep_download() {
   cd $HOME
-  VER="1.23.1"
-  wget "https://golang.org/dl/go$VER.linux-amd64.tar.gz"
   sudo rm -rf /usr/local/go
-  sudo tar -C /usr/local -xzf "go$VER.linux-amd64.tar.gz"
-  rm "go$VER.linux-amd64.tar.gz"
-  [ ! -f ~/.bash_profile ] && touch ~/.bash_profile
-  echo "export PATH=$PATH:/usr/local/go/bin:~/go/bin" >> ~/.bash_profile
-  source $HOME/.bash_profile
-  [ ! -d ~/go/bin ] && mkdir -p ~/go/bin
+  curl -Ls https://go.dev/dl/go1.23.1.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
+  eval $(echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/golang.sh)
+  eval $(echo 'export PATH=$PATH:$HOME/go/bin' | tee -a $HOME/.profile)
 
   read -p "Придумайте имя вашей ноде: " node_name
   echo "export MONIKER=\"$node_name\"" >> $HOME/.bash_profile
