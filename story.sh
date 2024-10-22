@@ -53,8 +53,8 @@ keep_download() {
   sed -i -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*seeds *=.*/seeds = \"$SEEDS\"/}" \
          -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*persistent_peers *=.*/persistent_peers = \"$PEERS\"/}" $HOME/.story/story/config/config.toml
 
-  wget -O $HOME/.story/story/config/genesis.json https://server-3.itrocket.net/testnet/story/genesis.json
-  wget -O $HOME/.story/story/config/addrbook.json  https://server-3.itrocket.net/testnet/story/addrbook.json
+  wget -O $HOME/.story/story/config/genesis.json https://storage.crouton.digital/testnet/story/files/genesis.json
+  wget -O $HOME/.story/story/config/addrbook.json https://story.snapshot.stake-take.com/addrbook.json
 
   sed -i.bak -e "s%:1317%:${STORY_PORT}317%g;
   s%:8551%:${STORY_PORT}551%g" $HOME/.story/story/config/story.toml
