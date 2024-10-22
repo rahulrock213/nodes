@@ -27,6 +27,9 @@ keep_download() {
   source $HOME/.bash_profile
   [ ! -d ~/go/bin ] && mkdir -p ~/go/bin
 
+  eval $(echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/golang.sh)
+  eval $(echo 'export PATH=$PATH:$HOME/go/bin' | tee -a $HOME/.profile)
+
   read -p "Придумайте имя вашей ноде: " node_name
   echo "export MONIKER=\"$node_name\"" >> $HOME/.bash_profile
   echo "export STORY_CHAIN_ID="iliad-0"" >> $HOME/.bash_profile
