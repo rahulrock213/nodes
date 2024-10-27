@@ -227,6 +227,21 @@ fix_peer() {
   done
 }
 
+try_to_fix() {
+  ENV_FILE="$HOME/ocean-node/.env"
+
+  SERVER_IP=$(grep -oP '(?<=/dns4/)[^/]*' "$ENV_FILE" | head -1)
+
+  if [[ -z "$SERVER_IP" ]]; then
+    echo "Не удалось найти IP-адрес в P2P_ANNOUNCE_ADDRESSES"
+    exit 1
+  fi
+
+  sed -i "s|P2P_ANNOUNCE_ADDRESSES=.*|P2P_ANNOUNCE_ADDRESSES=[\"/ip4/$SERVER_IP/tcp/9000\", \"/ip4/$SERVER_IP/ws/tcp/9001\"]|" "$ENV_FILE"
+
+  echo "Строка P2P_ANNOUNCE_ADDRESSES обновлена с использованием IP: $SERVER_IP"
+}
+
 reinstall_node() {
   read -p "Вы уверены? (CTRL+C чтобы выйти): " checkjust
 
@@ -255,8 +270,9 @@ while true; do
     echo "3. Посмотреть логи"
     echo "4. Перезапустить ноду"
     echo "5. Запустить скрипт по авто-перезапуску"
-    echo "6. Удалить ноду"
-    echo -e "7. Выйти из скрипта\n"
+    echo "6. Попытаться исправить способом от админов"
+    echo "7. Удалить ноду"
+    echo -e "8. Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -276,9 +292,12 @@ while true; do
         fix_peer
         ;;
       6)
-        reinstall_node
+        try_to_fix
         ;;
       7)
+        reinstall_node
+        ;;
+      8)
         exit_from_script
         ;;
       *)
