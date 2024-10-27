@@ -228,6 +228,9 @@ fix_peer() {
 }
 
 try_to_fix() {
+  docker stop $(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+  docker stop $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
+  
   ENV_FILE="$HOME/ocean-node/.env"
 
   SERVER_IP=$(grep -oP '(?<=/dns4/)[^/]*' "$ENV_FILE" | head -1)
@@ -240,6 +243,9 @@ try_to_fix() {
   sed -i "s|P2P_ANNOUNCE_ADDRESSES=.*|P2P_ANNOUNCE_ADDRESSES=[\"/ip4/$SERVER_IP/tcp/9000\", \"/ip4/$SERVER_IP/ws/tcp/9001\"]|" "$ENV_FILE"
 
   echo "Строка P2P_ANNOUNCE_ADDRESSES обновлена с использованием IP: $SERVER_IP"
+
+  docker start $(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
+  docker start $(docker ps -a | grep 'typesense/typesense' | awk '{print $1}')
 }
 
 reinstall_node() {
