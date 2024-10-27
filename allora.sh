@@ -8,6 +8,17 @@ channel_logo() {
 }
 
 download_node() {
+  sudo apt install lsof
+  
+  ports=(8000)
+
+  for port in "${ports[@]}"; do
+    if [[ $(lsof -i :"$port" | wc -l) -gt 0 ]]; then
+      echo "Ошибка: Порт $port занят. Программа не сможет выполниться."
+      exit 1
+    fi
+  done
+
   echo 'Обновляем систему...'
   sudo apt update && sudo apt upgrade -y
   sudo apt install -y ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 python3 python3-pip expect
