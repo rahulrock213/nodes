@@ -29,6 +29,7 @@ download_node() {
 
   if ! command -v docker &> /dev/null; then
     echo "Docker is not installed. Installing Docker..."
+    sudo apt-get update
     sudo apt-get install -y \
         apt-transport-https \
         ca-certificates \
@@ -38,6 +39,7 @@ download_node() {
 
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io
     sudo usermod -aG docker $USER
     echo "Docker успешно установлен."
@@ -45,8 +47,10 @@ download_node() {
     echo "Docker is already installed. Skip the installation."
   fi
 
+  sudo apt update & sudo apt upgrade -y
+
   # Installing the necessary packages
-  sudo apt install screen curl git wget nano -y
+  sudo apt install screen curl iptables build-essential git wget jq make gcc nano tmux htop nvme-cli pkg-config libssl-dev libleveldb-dev tar net-tools clang git ncdu pkg-config libssl-dev -y
 
   # Install NodeJS & NPM (version 20.16.1 minimum)
   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
