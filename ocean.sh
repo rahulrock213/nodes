@@ -165,22 +165,6 @@ keep_download() {
   docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
 }
 
-keep_download() {
-  echo -e 'Если вы выдруг забыли свой nodeID (peerID), то вводите в браузере http://АЙПИ_ВАШЕГО_СЕРВЕРА:8000/dashboard и ищите ваш nodeID\n'
-
-  read -p "Введите ваш nodeID: " nodeID
-
-  cd
-  cd ocean-node/
-
-  sed -i "s/YOUR_NODE_ID_HERE/$nodeID/g" .env
-
-  container_id=$(docker ps -a | grep Exited | awk '{print $1}')
-  docker rm $container_id
-
-  docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
-}
-
 check_logs() {
   logs_to_check=$(docker ps -a | grep 'ocean-node:mybuild' | awk '{print $1}')
   docker logs $logs_to_check --tail 300 -f
