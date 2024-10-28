@@ -104,7 +104,7 @@ PRIVATE_KEY=$PRIVATE_KEY
 
 ## core
 INDEXER_NETWORKS=["23295", "11155420"]
-RPCS={"23295":{"rpc":"https://testnet.sapphire.oasis.io","chainId":23295,"network":"oasis_saphire_testnet","chunkSize":100},"11155420":{"rpc":"https://sepolia.optimism.io","chainId":11155420,"network":"opt>
+RPCS={"23295":{"rpc":"https://testnet.sapphire.oasis.io","chainId":23295,"network":"oasis_saphire_testnet","chunkSize":100},"11155420":{"rpc":"https://sepolia.optimism.io","chainId":11155420,"network":"optimism-sepolia","chunkSize":100}}
 DB_URL=http://$SERVER_IP:8108/?apiKey=xyz
 IPFS_GATEWAY=https://ipfs.io/
 ARWEAVE_GATEWAY=https://arweave.net/
