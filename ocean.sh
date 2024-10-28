@@ -58,7 +58,7 @@ download_node() {
 
   # Typesense installation (API KEY is 'xyz' by default, you can change it)
   export TYPESENSE_API_KEY=xyz
-    
+
   sudo mkdir "$(pwd)"/typesense-data
 
   sudo docker run -d -p 8108:8108 \
