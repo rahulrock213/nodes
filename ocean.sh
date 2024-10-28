@@ -9,7 +9,7 @@ channel_logo() {
 
 download_node() {
   sudo apt install lsof
-  
+
   ports=(8000 9000 9001 9002 9003 8108)
 
   for port in "${ports[@]}"; do
@@ -25,8 +25,6 @@ download_node() {
   read -p "Введите IP адрес вашего сервера (192.133. ...): " SERVER_IP
   read -p "Введите адрес вашего основного кошелька, с помощью которого вы сможете зайти в админ панель: " ADMIN_ADDRESS
 
-  sudo apt update & sudo apt upgrade -y
-
   if ! command -v docker &> /dev/null; then
     echo "Docker is not installed. Installing Docker..."
     sudo apt-get update
@@ -38,7 +36,7 @@ download_node() {
         lsb-release
 
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev>
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io
     sudo usermod -aG docker $USER
@@ -106,7 +104,7 @@ PRIVATE_KEY=$PRIVATE_KEY
 
 ## core
 INDEXER_NETWORKS=["23295", "11155420"]
-RPCS={"23295":{"rpc":"https://testnet.sapphire.oasis.io","chainId":23295,"network":"oasis_saphire_testnet","chunkSize":100},"11155420":{"rpc":"https://sepolia.optimism.io","chainId":11155420,"network":"optimism-sepolia","chunkSize":100}}
+RPCS={"23295":{"rpc":"https://testnet.sapphire.oasis.io","chainId":23295,"network":"oasis_saphire_testnet","chunkSize":100},"11155420":{"rpc":"https://sepolia.optimism.io","chainId":11155420,"network":"opt>
 DB_URL=http://$SERVER_IP:8108/?apiKey=xyz
 IPFS_GATEWAY=https://ipfs.io/
 ARWEAVE_GATEWAY=https://arweave.net/
@@ -138,7 +136,7 @@ P2P_ipV4BindWsPort=9001
 P2P_ipV6BindAddress=::
 P2P_ipV6BindTcpPort=9002
 P2P_ipV6BindWsPort=9003
-P2P_ANNOUNCE_ADDRESSES=["/dns4/$SERVER_IP/tcp/9000/p2p/YOUR_NODE_ID_HERE", "/dns4/$SERVER_IP/ws/tcp/9001", "/dns6/$SERVER_IP/tcp/9002/p2p/YOUR_NODE_ID_HERE", "/dns6/$SERVER_IP/ws/tcp/9003"]
+P2P_ANNOUNCE_ADDRESSES=["/ip4/$SERVER_IP/tcp/9000", "/ip4/$SERVER_IP/ws/tcp/9001"]
 P2P_ANNOUNCE_PRIVATE=
 P2P_pubsubPeerDiscoveryInterval=
 P2P_dhtMaxInboundStreams=
@@ -157,6 +155,13 @@ EOF
   echo ".env file is created and populated."
 
   # Starting a node
+  docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
+}
+
+keep_download() {
+  container_id=$(docker ps -a | grep Exited | awk '{print $1}')
+  docker rm $container_id
+
   docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
 }
 
