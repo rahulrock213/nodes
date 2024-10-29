@@ -29,6 +29,8 @@ download_node() {
 
   sudo apt install curl -y
   sudo apt install ca-certificates
+  sudo apt-get install jq
+  sudo apt-get install screen
 
   if ! command -v docker &> /dev/null; then
     sudo apt install docker.io -y
