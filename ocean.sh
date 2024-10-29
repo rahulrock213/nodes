@@ -114,6 +114,8 @@ networks:
   ocean_network:
     driver: bridge
 EOF
+
+  docker-compose up -d
 }
 
 check_logs_ocean() {
@@ -127,11 +129,14 @@ check_logs_typesense() {
 }
 
 restart_containers() {
+  cd $HOME/ocean/
   docker-compose down
   docker-compose up -d
 }
 
 fix_start_problem() {
+  cd $HOME/ocean/
+
   read -p "Введите ваш nodeID (peerID): " value_node
 
   url="https://incentive-backend.oceanprotocol.com/nodes?page=1&size=10&search=$value_node"
@@ -171,16 +176,22 @@ fix_start_problem() {
 }
 
 fix_peer() {
-  cd $HOME
-  cd ocean/
+  cd $HOME/ocean/
 
-  read -p "Введите ваш API-ключ с Alchemy: " API_KEY
+  read -p "Введите ваш API ключ Alchemy: " API_KEY
 
-  NEW_RPCS='{"1":{"rpc":"https://eth-mainnet.g.alchemy.com/v2/'$API_KEY'","fallbackRPCs":["https://rpc.ankr.com/eth","https://1rpc.io/eth"],"chainId":1,"network":"mainnet","chunkSize":100},"10":{"rpc":"https://opt-mainnet.g.alchemy.com/v2/'$API_KEY'","fallbackRPCs":["https://optimism-mainnet.public.blastapi.io","https://rpc.ankr.com/optimism","https://optimism-rpc.publicnode.com"],"chainId":10,"network":"optimism","chunkSize":100},"137":{"rpc":"https://polygon-mainnet.g.alchemy.com/v2/'$API_KEY'","fallbackRPCs":["https://polygon-mainnet.public.blastapi.io","https://1rpc.io/matic","https://rpc.ankr.com/polygon"],"chainId":137,"network":"polygon","chunkSize":100},"23294":{"rpc":"https://sapphire.oasis.io","fallbackRPCs":["https://1rpc.io/oasis/sapphire"],"chainId":23294,"network":"sapphire","chunkSize":100},"11155111":{"rpc":"https://eth-sepolia.g.alchemy.com/v2/'$API_KEY'","fallbackRPCs":["https://1rpc.io/sepolia"],"chainId":11155111,"network":"sepolia","chunkSize":100},"11155420":{"rpc":"https://opt-sepolia.g.alchemy.com/v2/'$API_KEY'","fallbackRPCs":["https://endpoints.omniatech.io/v1/op/sepolia/public","https://optimism-sepolia.blockpi.network/v1/rpc/public"],"chainId":11155420,"network":"optimism-sepolia","chunkSize":100}}'
+  NEW_RPC="RPCS: '{\"1\": {\"rpc\": \"https://eth-mainnet.g.alchemy.com/v2/$API_KEY\", \"fallbackRPCs\": [\"https://rpc.ankr.com/eth\", \"https://1rpc.io/eth\"], \"chainId\": 1, \"network\": \"mainnet\", \"chunkSize\": 100}, \"10\": {\"rpc\": \"https://opt-mainnet.g.alchemy.com/v2/$API_KEY\", \"fallbackRPCs\": [\"https://optimism-mainnet.public.blastapi.io\", \"https://rpc.ankr.com/optimism\", \"https://optimism-rpc.publicnode.com\"], \"chainId\": 10, \"network\": \"optimism\", \"chunkSize\": 100}, \"137\": {\"rpc\": \"https://polygon-mainnet.g.alchemy.com/v2/$API_KEY\", \"fallbackRPCs\": [\"https://polygon-mainnet.public.blastapi.io\", \"https://1rpc.io/matic\", \"https://rpc.ankr.com/polygon\"], \"chainId\": 137, \"network\": \"polygon\", \"chunkSize\": 100}, \"23294\": {\"rpc\": \"https://sapphire.oasis.io\", \"fallbackRPCs\": [\"https://1rpc.io/oasis/sapphire\"], \"chainId\": 23294, \"network\": \"sapphire\", \"chunkSize\": 100}, \"11155111\": {\"rpc\": \"https://eth-sepolia.g.alchemy.com/v2/$API_KEY\", \"fallbackRPCs\": [\"https://1rpc.io/sepolia\"], \"chainId\": 11155111, \"network\": \"sepolia\", \"chunkSize\": 100}, \"11155420\": {\"rpc\": \"https://opt-sepolia.g.alchemy.com/v2/$API_KEY\", \"fallbackRPCs\": [\"https://endpoints.omniatech.io/v1/op/sepolia/public\", \"https://optimism-sepolia.blockpi.network/v1/rpc/public\"], \"chainId\": 11155420, \"network\": \"optimism-sepolia\", \"chunkSize\": 100}}'"
 
-  sed -i '' -E "s#(RPCS: ').*(')#\1$NEW_RPCS\2#" docker-compose.yml
+  FILE="docker-compose.yml"
 
-  echo "RPCS блок успешно обновлен в файле"
+  sed -i "s|RPCS:.*|$NEW_RPC|" "$FILE"
+
+  sleep 1
+
+  docker-compose down
+  docker-compose up -d
+
+  echo 'Все прошло успешно...'
 }
 
 reinstall_node() {
