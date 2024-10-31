@@ -165,7 +165,8 @@ fix_start_problem() {
     if [[ "$eligible" == "false" ]]; then
       echo "eligible is false. Выполняем действия..."
       
-      ‎restart_containers‎
+      docker-compose down
+      docker-compose up -d
 
       echo "Выполнились..."
     else
