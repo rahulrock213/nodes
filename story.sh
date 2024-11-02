@@ -178,6 +178,8 @@ restore_validators_data() {
   else
     sudo nano /$HOME/.story/story/config/priv_validator_key.json
   fi
+
+  echo 'Восстановились...'
 }
 
 export_wallet() {
