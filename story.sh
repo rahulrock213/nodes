@@ -10,83 +10,70 @@ channel_logo() {
 download_node() {
   echo 'Начинаю установку...'
 
-  sudo apt-get update -y && sudo apt upgrade -y && sudo apt-get install make build-essential nano screen unzip lz4 gcc git jq -y
+  sudo apt-get update -y && sudo apt upgrade -y 
+  sudo apt install curl git nano screen make jq build-essential gcc unzip wget lz4 aria2 -y
 
-  screen -S storynode
+  cd $HOME
+  ver="1.22.0"
+  wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz"
+  sudo rm -rf /usr/local/go
+  sudo tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz"
+  rm "go$ver.linux-amd64.tar.gz"
+  echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile
+  source ~/.bash_profile
+
+
+  download_default
 }
 
-keep_download() {
-  cd $HOME
-  VER="1.23.1"
-  wget "https://golang.org/dl/go$VER.linux-amd64.tar.gz"
-  sudo rm -rf /usr/local/go
-  sudo tar -C /usr/local -xzf "go$VER.linux-amd64.tar.gz"
-  rm "go$VER.linux-amd64.tar.gz"
-  [ ! -f ~/.bash_profile ] && touch ~/.bash_profile
-  echo "export PATH=$PATH:/usr/local/go/bin:~/go/bin" >> ~/.bash_profile
-  source $HOME/.bash_profile
-  [ ! -d ~/go/bin ] && mkdir -p ~/go/bin
+move_to_new_network() {
+  all_data_story="$HOME/.story/story/config/priv_validator_key.json"
+  backup_file="$HOME/backup_file_story.txt"
+  cat "$all_data_story" > "$backup_file"
 
-  sudo rm -rf /usr/local/go
-  curl -Ls https://go.dev/dl/go1.23.1.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
-  eval $(echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/golang.sh)
-  eval $(echo 'export PATH=$PATH:$HOME/go/bin' | tee -a $HOME/.profile)
+  cd $HOME
+  cat backup_file_story.txt
+  read -p "ВАЖНО: Сохраните все данные, которые вывелись у вас на экране (введите любую кнопку чтобы продолжить): " checkjust
+
+
+  download_default
+}
+
+download_default() {
+  cd $HOME
+  wget https://github.com/piplabs/story-geth/releases/download/v0.10.0/geth-linux-amd64
+  [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
+  if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
+    echo "export PATH=$PATH:/usr/local/go/bin:~/go/bin" >> ~/.bash_profile
+  fi
+  chmod +x geth-linux-amd64
+  mv $HOME/geth-linux-amd64 $HOME/go/bin/story-geth
+  source $HOME/.bash_profile
+
+  cd $HOME
+  wget https://github.com/piplabs/story/releases/download/v0.12.0/story-linux-amd64
+  [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
+  if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
+    echo "export PATH=$PATH:/usr/local/go/bin:~/go/bin" >> ~/.bash_profile
+  fi
+  chmod +x story-linux-amd64
+  mv $HOME/story-linux-amd64 $HOME/go/bin/story
+  source $HOME/.bash_profile
 
   read -p "Придумайте имя вашей ноде: " node_name
-  echo "export MONIKER=\"$node_name\"" >> $HOME/.bash_profile
-  echo "export STORY_CHAIN_ID="iliad-0"" >> $HOME/.bash_profile
-  echo "export STORY_PORT="52"" >> $HOME/.bash_profile
-  source $HOME/.bash_profile
-
-  cd $HOME
-  rm -rf bin
-  mkdir bin
-  cd bin
-  wget -O geth https://github.com/piplabs/story-geth/releases/download/v0.9.4/geth-linux-amd64
-  chmod +x geth
-  mv ~/bin/geth ~/go/bin/
-  mkdir -p ~/.story/story
-  mkdir -p ~/.story/geth
-
-  cd $HOME
-  rm -rf story
-  git clone https://github.com/piplabs/story
-  cd story
-  git checkout v0.11.0
-  go build -o story ./client
-  sudo mv ~/story/story ~/go/bin/
-
-  story init --moniker "$node_name" --network iliad
-
-  SEEDS="b6fb541c80d968931602710342dedfe1f5c577e3@story-seed.mandragora.io:23656,51ff395354c13fab493a03268249a74860b5f9cc@story-testnet-seed.itrocket.net:26656,5d7507dbb0e04150f800297eaba39c5161c034fe@135.125.188.77:26656"
-  PEERS="$(curl -sS https://story-rpc.mandragora.io/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)"
-  sed -i -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*seeds *=.*/seeds = \"$SEEDS\"/}" \
-         -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*persistent_peers *=.*/persistent_peers = \"$PEERS\"/}" $HOME/.story/story/config/config.toml
-
-  wget -O $HOME/.story/story/config/genesis.json https://storage.crouton.digital/testnet/story/files/genesis.json
-  wget -O $HOME/.story/story/config/addrbook.json https://story.snapshot.stake-take.com/addrbook.json
-
-  sed -i.bak -e "s%:1317%:${STORY_PORT}317%g;
-  s%:8551%:${STORY_PORT}551%g" $HOME/.story/story/config/story.toml
-  sed -i.bak -e "s%:26658%:${STORY_PORT}658%g;
-  s%:26657%:${STORY_PORT}657%g;
-  s%:26656%:${STORY_PORT}656%g;
-  s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${STORY_PORT}656\"%;
-  s%:26660%:${STORY_PORT}660%g" $HOME/.story/story/config/config.toml
-  sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.story/story/config/config.toml
-  sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.story/story/config/config.toml
+  story init --network odyssey --moniker "$node_name"
 
   sudo tee /etc/systemd/system/story-geth.service > /dev/null <<EOF
 [Unit]
-Description=Story Geth daemon
-After=network-online.target
+Description=Story Geth Client
+After=network.target
 
 [Service]
-User=$USER
-ExecStart=$(which geth) --iliad --syncmode full --http --http.api eth,net,web3,engine --http.vhosts '*' --http.addr 0.0.0.0 --http.port ${STORY_PORT}545 --authrpc.port ${STORY_PORT}551 --ws --ws.api eth,web3,net,txpool --ws.addr 0.0.0.0 --ws.port ${STORY_PORT}546
+User=root
+ExecStart=/root/go/bin/story-geth --odyssey --syncmode full
 Restart=on-failure
 RestartSec=3
-LimitNOFILE=65535
+LimitNOFILE=4096
 
 [Install]
 WantedBy=multi-user.target
@@ -94,65 +81,38 @@ EOF
 
   sudo tee /etc/systemd/system/story.service > /dev/null <<EOF
 [Unit]
-Description=Story Service
+Description=Story Consensus Client
 After=network.target
 
 [Service]
-User=$USER
-WorkingDirectory=$HOME/.story/story
-ExecStart=$(which story) run
-
+User=root
+ExecStart=/root/go/bin/story run
 Restart=on-failure
-RestartSec=5
-LimitNOFILE=65535
+RestartSec=3
+LimitNOFILE=4096
+
 [Install]
 WantedBy=multi-user.target
 EOF
 
-  cp $HOME/.story/story/data/priv_validator_state.json $HOME/.story/story/priv_validator_state.json.backup
+  sudo systemctl daemon-reload && \
+  sudo systemctl start story-geth && \
+  sudo systemctl enable story-geth
 
-  rm -rf $HOME/.story/story/data
+  sudo systemctl daemon-reload && \
+  sudo systemctl start story && \
+  sudo systemctl enable story
 
-  read -p "Скопируйте ПЕРВУЮ (!) актуальную ссылку на snapshot ноды по ссылке из гайда (curl https...): " snapshot_first_link
+  PEERS=$(curl -sS https://story-cosmos-rpc.spidernode.net/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
+  sed -i.bak -e "s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.story/story/config/config.toml
 
-  curl_command=$(echo "$snapshot_first_link")
-
-  if [[ "$snapshot_first_link" =~ ^curl ]]; then
-    if grep -q 'https' <<< "$snapshot_first_link"; then
-      eval "$curl_command"
-    else
-      echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
-    fi
-  else
-    echo "Неверный формат ссылки. Ссылка должна начинаться с 'curl'"
-  fi
-}
-
-final_download() {
-  mv $HOME/.story/story/priv_validator_state.json.backup $HOME/.story/story/data/priv_validator_state.json
-  rm -rf $HOME/.story/geth/iliad/geth/chaindata
-  mkdir -p $HOME/.story/geth/iliad/geth
-
-  read -p "Скопируйте ВТОРУЮ (!!!) актуальную ссылку на snapshot ноды по ссылке из гайда (curl https...): " snapshot_second_link
-
-  curl_command_second=$(echo "$snapshot_second_link")
-
-  if [[ "$snapshot_second_link" =~ ^curl ]]; then
-    if grep -q 'https' <<< "$snapshot_second_link"; then
-      eval "$curl_command_second"
-    else
-      echo "Неверный формат ссылки. Ссылка должна содержать 'https'"
-    fi
-  else
-    echo "Неверный формат ссылки. Ссылка должна начинаться с 'curl'"
-  fi
-
-  sudo systemctl daemon-reload
-  sudo systemctl enable story story-geth
-  sudo systemctl restart story story-geth
+  sudo systemctl restart story
+  sudo systemctl restart story-geth
 }
 
 check_sync() {
+  echo 'Для того, чтобы долго не ждать - переходите к пункту SNAPSHOT'
+
   rpc_port=$(grep -m 1 -oP '^laddr = "\K[^"]+' "$HOME/.story/story/config/config.toml" | cut -d ':' -f 3)
   while true; do
     local_height=$(curl -s localhost:$rpc_port/status | jq -r '.result.sync_info.latest_block_height')
@@ -175,20 +135,79 @@ check_sync() {
   done
 }
 
+download_snapshot() {
+  sudo apt-get install wget lz4 aria2 pv -y
+
+  sudo systemctl stop story
+  sudo systemctl stop story-geth
+
+  cd $HOME
+  aria2c -x 16 -s 16 https://snapshot.spidernode.net/Geth_snapshot.lz4
+
+  cd $HOME
+  aria2c -x 16 -s 16 https://snapshot.spidernode.net/Story_snapshot.lz4
+
+  mv $HOME/.story/story/data/priv_validator_state.json $HOME/.story/priv_validator_state.json.backup
+
+  rm -rf ~/.story/story/data
+  rm -rf ~/.story/geth/odyssey/geth/chaindata
+
+  sudo mkdir -p /root/.story/story/data
+  lz4 -d Story_snapshot.lz4 | pv | sudo tar xv -C /root/.story/story/
+
+  sudo mkdir -p /root/.story/geth/odyssey/geth/chaindata
+  lz4 -d Geth_snapshot.lz4 | pv | sudo tar xv -C /root/.story/geth/odyssey/geth/
+
+  mv $HOME/.story/priv_validator_state.json.backup $HOME/.story/story/data/priv_validator_state.json
+
+  sudo systemctl start story
+  sudo systemctl start story-geth
+
+  sudo rm -rf Story_snapshot.lz4
+  sudo rm -rf Geth_snapshot.lz4
+}
+
+restore_validators_data() {
+  if [ -f "$HOME/backup_file_story.txt" ]; then
+    cat "$HOME/backup_file_story.txt" > "$HOME/.story/story/config/priv_validator_key.json"
+
+    cd $HOME
+    sudo rm backup_file_story.txt
+  else
+    sudo nano /$HOME/.story/story/config/priv_validator_key.json
+  fi
+}
+
 export_wallet() {
+  echo 'Сохраните все данные в надежном месте...'
+
+  story validator export
+
   story validator export --export-evm-key
 
   sleep 1
 
-  cat /root/.story/story/config/private_key.txt
+  cat /$HOME/.story/story/config/private_key.txt
 }
 
 create_validator() {
-  story validator create --stake 1000000000000000000 --chain-id 1513 --private-key $(cat $HOME/.story/story/config/private_key.txt | grep "PRIVATE_KEY" | awk -F'=' '{print $2}')
+  story validator create --stake 1000000000000000000 --private-key $(cat $HOME/.story/story/config/private_key.txt | grep "PRIVATE_KEY" | awk -F'=' '{print $2}')
 }
 
-check_logs() {
+check_logs_story() {
   sudo journalctl -u story -f
+}
+
+check_logs_story_geth() {
+  sudo journalctl -u story-geth -f
+}
+
+delete_node() {
+  sudo systemctl stop story story-geth
+  sudo systemctl disable story story-geth
+  rm -rf $HOME/.story
+  sudo rm /etc/systemd/system/story.service /etc/systemd/system/story-geth.service
+  sudo systemctl daemon-reload
 }
 
 exit_from_script() {
@@ -199,14 +218,16 @@ while true; do
     channel_logo
     sleep 2
     echo -e "\n\nМеню:"
-    echo "1. Установить библиотеки"
-    echo "2. Установить ноду"
-    echo "3. Продолжить установку"
-    echo "4. Проверить синхронизацию"
-    echo "5. Экспорт кошелька"
-    echo "6. Создать валидатора"
-    echo "7. Посмотреть логи"
-    echo -e "8. Выйти из скрипта\n"
+    echo "1. 🛠️ Установить ноду"
+    echo "2. 🔄 Проверить синхронизацию"
+    echo "3. 📦 Установить SNAPSHOT"
+    echo "4. 🌌 Перейти на новую сеть (Odyssey)"
+    echo "5. 🗄️ Восстановить данные"
+    echo "6. 💼 Экспорт кошелька"
+    echo "7. 📜 Посмотреть логи STORY"
+    echo "8. 📜 Посмотреть логи STORY-GETH"
+    echo "9. 🗑️ Удалить ноду"
+    echo -e "10. ❌ Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -214,24 +235,30 @@ while true; do
         download_node
         ;;
       2)
-        keep_download
-        ;;
-      3)
-        final_download
-        ;;
-      4)
         check_sync
         ;;
+      3)
+        download_snapshot
+        ;;
+      4)
+        move_to_new_network
+        ;;
       5)
-        export_wallet
+        restore_validators_data
         ;;
       6)
-        create_validator
+        export_wallet
         ;;
       7)
-        check_logs
+        check_logs_story
         ;;
       8)
+        check_logs_story_geth
+        ;;
+      9)
+        delete_node
+        ;;
+      10)
         exit_from_script
         ;;
       *)
