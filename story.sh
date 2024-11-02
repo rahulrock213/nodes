@@ -35,6 +35,8 @@ move_to_new_network() {
   cat backup_file_story.txt
   read -p "ВАЖНО: Сохраните все данные, которые вывелись у вас на экране (введите любую кнопку чтобы продолжить): " checkjust
 
+  sudo rm -r $HOME/.story
+
 
   download_default
 }
