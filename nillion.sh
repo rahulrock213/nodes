@@ -42,6 +42,7 @@ launch_node() {
 restart_not_working_logs() {
   logs_to_check=$(docker ps --filter "ancestor=nillion/verifier" --filter "status=exited" --format "{{.ID}}" --latest)
   docker restart $logs_to_check
+  docker logs $logs_to_check
 }
 
 check_node_logs() {
