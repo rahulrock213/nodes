@@ -20,7 +20,6 @@ download_node() {
 
   docker pull nillion/verifier:v1.0.1 || echo 'Docker не был установлен'
   mkdir -p nillion/verifier
-  mkdir -p nillion/accuser
   docker run -v ./nillion/verifier:/var/tmp nillion/verifier:v1.0.1 initialise
 }
 
