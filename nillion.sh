@@ -39,8 +39,13 @@ launch_node() {
   docker run -v ./nillion/verifier:/var/tmp nillion/verifier:v1.0.1 verify --rpc-endpoint "https://testnet-nillion-rpc.lavenderfive.com"
 }
 
+restart_not_working_logs() {
+  logs_to_check=$(docker ps --filter "ancestor=nillion/verifier" --filter "status=exited" --format "{{.ID}}" --latest)
+  docker restart $logs_to_check
+}
+
 check_node_logs() {
-  logs_to_check=$(docker ps -a | grep 'nillion/verifier' | awk '{print $1}')
+  logs_to_check=$(docker ps --filter "ancestor=nillion/verifier" --filter "status=running" --format "{{.ID}}" --latest)
   docker logs $logs_to_check --tail 700 -f
 }
 
@@ -71,10 +76,11 @@ while true; do
     echo "1. 🛠️ Установить ноду"
     echo "2. 📊 Посмотреть все данные"
     echo "3. 🚀 Запустить ноду"
-    echo "4. 📜 Посмотреть логи"
-    echo "5. 🔄 Перезапустить ноду"
-    echo "6. 🗑️ Удалить ноду"
-    echo -e "7. ❌ Выйти из скрипта\n"
+    echo "4. 🌊 Перезапустить неработающий Docker"
+    echo "5. 📜 Посмотреть логи"
+    echo "6. 🔄 Перезапустить Nillion контейнеры"
+    echo "7. 🗑️ Удалить ноду"
+    echo -e "8. ❌ Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -88,15 +94,18 @@ while true; do
         launch_node
         ;;
       4)
-        check_node_logs
+        restart_not_working_logs
         ;;
       5)
-        restart_node
+        check_node_logs
         ;;
       6)
-        delete_node
+        restart_node
         ;;
       7)
+        delete_node
+        ;;
+      8)
         exit_from_script
         ;;
       *)
