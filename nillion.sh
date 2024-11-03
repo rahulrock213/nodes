@@ -40,13 +40,13 @@ launch_node() {
 }
 
 restart_not_working_logs() {
-  logs_to_check=$(docker ps --filter "ancestor=nillion/verifier" --filter "status=exited" --format "{{.ID}}" --latest)
+  logs_to_check=$(docker ps --filter "ancestor=nillion/verifier:v1.0.1" --filter "status=exited" --format "{{.ID}}" --latest)
   docker restart $logs_to_check
   docker logs $logs_to_check
 }
 
 check_node_logs() {
-  logs_to_check=$(docker ps --filter "ancestor=nillion/verifier" --filter "status=running" --format "{{.ID}}" --latest)
+  logs_to_check=$(docker ps --filter "ancestor=nillion/verifier:v1.0.1" --filter "status=running" --format "{{.ID}}" --latest)
   docker logs $logs_to_check --tail 700 -f
 }
 
