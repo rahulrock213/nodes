@@ -14,9 +14,18 @@ download_node() {
 
   sudo apt install gnupg lsb-release apt-transport-https ca-certificates nano curl jq software-properties-common -y
   
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - 
-  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable" 
-  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+  if command -v docker &> /dev/null && command -v docker-compose &> /dev/null; then
+    echo "Docker и Docker Compose уже установлены."
+  else
+    echo "Установка Docker и Docker Compose..."
+
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+    sudo apt-get update
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+
+    echo "Docker и Docker Compose успешно установлены."
+  fi
 
   docker pull nillion/verifier:v1.0.1 || echo 'Docker не был установлен'
   mkdir -p nillion/verifier
