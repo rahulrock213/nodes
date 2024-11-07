@@ -41,6 +41,23 @@ move_to_new_network() {
   download_default
 }
 
+update_to_new_version() {
+  sudo systemctl stop story
+
+  cd $HOME
+  wget https://github.com/piplabs/story/releases/download/v0.12.1/story-linux-amd64
+  chmod +x story-linux-amd64
+  sudo cp $HOME/story-linux-amd64 $(which story)
+
+  source $HOME/.bash_profile
+
+  sudo systemctl daemon-reload
+  sudo systemctl start story
+  sudo systemctl status story
+
+  echo 'Если синхронизация сильно отстает, приступите к пункту SNAPSHOT'
+}
+
 download_default() {
   cd $HOME
   wget https://github.com/piplabs/story-geth/releases/download/v0.10.0/geth-linux-amd64
@@ -53,7 +70,7 @@ download_default() {
   source $HOME/.bash_profile
 
   cd $HOME
-  wget https://github.com/piplabs/story/releases/download/v0.12.0/story-linux-amd64
+  wget https://github.com/piplabs/story/releases/download/v0.12.1/story-linux-amd64
   [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
   if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
     echo "export PATH=$PATH:/usr/local/go/bin:~/go/bin" >> ~/.bash_profile
@@ -108,6 +125,7 @@ EOF
   PEERS=$(curl -sS https://story-cosmos-rpc.spidernode.net/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
   sed -i.bak -e "s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.story/story/config/config.toml
 
+  sudo systemctl daemon-reload
   sudo systemctl restart story
   sudo systemctl restart story-geth
 }
@@ -178,8 +196,6 @@ restore_validators_data() {
   else
     sudo nano /$HOME/.story/story/config/priv_validator_key.json
   fi
-
-  echo 'Восстановились...'
 }
 
 export_wallet() {
@@ -226,12 +242,13 @@ while true; do
     echo "2. 🔄 Проверить синхронизацию"
     echo "3. 📦 Установить SNAPSHOT"
     echo "4. 🌌 Перейти на новую сеть (Odyssey)"
-    echo "5. 🗄️ Восстановить данные"
-    echo "6. 💼 Экспорт кошелька"
-    echo "7. 📜 Посмотреть логи STORY"
-    echo "8. 📜 Посмотреть логи STORY-GETH"
-    echo "9. 🗑️ Удалить ноду"
-    echo -e "10. ❌ Выйти из скрипта\n"
+    echo "5. ⚡ Перейти с версии v0.12.0 на v0.12.1"
+    echo "6. 🗄️ Восстановить данные"
+    echo "7. 💼 Экспорт кошелька"
+    echo "8. 📜 Посмотреть логи STORY"
+    echo "9. 📜 Посмотреть логи STORY-GETH"
+    echo "10. 🗑️ Удалить ноду"
+    echo -e "11. ❌ Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -248,21 +265,24 @@ while true; do
         move_to_new_network
         ;;
       5)
-        restore_validators_data
+        update_to_new_version
         ;;
       6)
-        export_wallet
+        restore_validators_data
         ;;
       7)
-        check_logs_story
+        export_wallet
         ;;
       8)
-        check_logs_story_geth
+        check_logs_story
         ;;
       9)
-        delete_node
+        check_logs_story_geth
         ;;
       10)
+        delete_node
+        ;;
+      11)
         exit_from_script
         ;;
       *)
