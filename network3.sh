@@ -10,6 +10,8 @@ channel_logo() {
 download_node() {
   echo 'Начинаю установку...'
 
+  cd $HOME
+
   sudo apt install lsof
 
   ports=(1433 8080)
@@ -22,7 +24,7 @@ download_node() {
   done
 
   sudo apt update -y && sudo apt upgrade -y
-  sudo apt install -y screen net-tools jq curl
+  sudo apt install screen net-tools jq curl -y
 
   wget https://network3.io/ubuntu-node-v2.1.0.tar
   tar -xvf ubuntu-node-v2.1.0.tar
