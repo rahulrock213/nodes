@@ -27,7 +27,7 @@ download_node() {
 
   sudo dpkg --configure -a
 
-  sudo apt install screen net-tools jq curl -y
+  sudo apt install screen net-tools iptables jq curl -y
 
   wget https://network3.io/ubuntu-node-v2.1.0.tar
   tar -xvf ubuntu-node-v2.1.0.tar
