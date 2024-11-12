@@ -24,6 +24,9 @@ download_node() {
   done
 
   sudo apt update -y && sudo apt upgrade -y
+
+  sudo dpkg --configure -a
+
   sudo apt install screen net-tools jq curl -y
 
   wget https://network3.io/ubuntu-node-v2.1.0.tar
