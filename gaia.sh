@@ -24,7 +24,12 @@ download_node() {
   curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
   source ~/.bashrc
 
+  cd $HOME
+  source /root/.bashrc
+
   gaianet init --config https://raw.gaianet.ai/qwen2-0.5b-instruct/config.json
+
+  curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install_v2.sh | bash -s -- -v 0.13.5 --noavx
 
   gaianet start
 
@@ -55,6 +60,10 @@ download_node() {
 
 check_states() {
   gaianet info
+}
+
+check_logs() {
+  screen -r gaianetnode
 }
 
 update_node() {
@@ -90,11 +99,12 @@ while true; do
     echo -e "\n\nМеню:"
     echo "1. ✨ Установить ноду"
     echo "2. 📊 Посмотреть данные"
-    echo "3. 🔄 Обновить ноду"
-    echo "4. 🚀 Запустить ноду"
-    echo "5. 🛑 Остановить ноду"
-    echo "6. 🗑️ Удалить ноду"
-    echo -e "7. 👋 Выйти из скрипта\n"
+    echo "3. 🟦 Посмотреть логи"
+    echo "4. 🔄 Обновить ноду"
+    echo "5. 🚀 Запустить ноду"
+    echo "6. 🛑 Остановить ноду"
+    echo "7. 🗑️ Удалить ноду"
+    echo -e "8. 👋 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -105,18 +115,21 @@ while true; do
         check_states
         ;;
       3)
-        update_node
+        check_logs
         ;;
       4)
-        start_node
+        update_node
         ;;
       5)
-        stop_node
+        start_node
         ;;
       6)
-        delete_node
+        stop_node
         ;;
       7)
+        delete_node
+        ;;
+      8)
         exit_from_script
         ;;
       *)
