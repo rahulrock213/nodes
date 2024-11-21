@@ -42,10 +42,12 @@ download_node() {
 
   gaianet info
 
-  read -p "Введите ваш Node ID: " NEW_ID
+  read -p "Введите ваш Node ID (но перед этим зайдите по ссылке из гайда на сервере): " NEW_ID
   sed -i "s/0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62/$NEW_ID/g" config.json
 
   sed -i 's/const CHUNK_SIZE = 5;/const CHUNK_SIZE = 1;/g' bot_gaia.js
+
+  sleep 15
 
   screen -dmS gaianetnode bash -c '
     echo "Начало выполнения скрипта в screen-сессии"
