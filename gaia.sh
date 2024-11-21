@@ -23,8 +23,9 @@ download_node() {
 
   curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
   source ~/.bashrc
+}
 
-  cd $HOME
+keep_download() {
   source /root/.bashrc
 
   gaianet init --config https://raw.gaianet.ai/qwen2-0.5b-instruct/config.json
@@ -100,13 +101,14 @@ while true; do
     sleep 2
     echo -e "\n\nМеню:"
     echo "1. ✨ Установить ноду"
-    echo "2. 📊 Посмотреть данные"
-    echo "3. 🟦 Посмотреть логи"
-    echo "4. 🔄 Обновить ноду"
-    echo "5. 🚀 Запустить ноду"
-    echo "6. 🛑 Остановить ноду"
-    echo "7. 🗑️ Удалить ноду"
-    echo -e "8. 👋 Выйти из скрипта\n"
+    echo "2. 🔰 Продолжить установку"
+    echo "3. 📊 Посмотреть данные"
+    echo "4. 🟦 Посмотреть логи"
+    echo "5. 🔄 Обновить ноду"
+    echo "6. 🚀 Запустить ноду"
+    echo "7. 🛑 Остановить ноду"
+    echo "8. 🗑️ Удалить ноду"
+    echo -e "9. 👋 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -114,24 +116,27 @@ while true; do
         download_node
         ;;
       2)
-        check_states
+        keep_download
         ;;
       3)
-        check_logs
+        check_states
         ;;
       4)
-        update_node
+        check_logs
         ;;
       5)
-        start_node
+        update_node
         ;;
       6)
-        stop_node
+        start_node
         ;;
       7)
-        delete_node
+        stop_node
         ;;
       8)
+        delete_node
+        ;;
+      9)
         exit_from_script
         ;;
       *)
