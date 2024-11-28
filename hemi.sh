@@ -38,7 +38,7 @@ download_node() {
   read -p "Как выполните, введите любую кнопку сюда: " checkjust
   
   echo "export POPM_PRIVATE_KEY=$private_key" >> ~/.bashrc
-  echo 'export POPM_STATIC_FEE=700' >> ~/.bashrc
+  echo 'export POPM_STATIC_FEE=750' >> ~/.bashrc
   echo 'export POPM_BFG_URL=wss://testnet.rpc.hemi.network/v1/ws/public' >> ~/.bashrc
   source ~/.bashrc
 
@@ -51,7 +51,7 @@ After=network.target
 User=$USER
 Environment="POPM_BFG_REQUEST_TIMEOUT=60s"
 Environment="POPM_BTC_PRIVKEY=$private_key"
-Environment="POPM_STATIC_FEE=700"
+Environment="POPM_STATIC_FEE=750"
 Environment="POPM_BFG_URL=wss://testnet.rpc.hemi.network/v1/ws/public"
 WorkingDirectory=$HOME/hemi
 ExecStart=$HOME/hemi/popmd
@@ -220,7 +220,7 @@ After=network.target
 User=$USER
 Environment="POPM_BFG_REQUEST_TIMEOUT=60s"
 Environment="POPM_BTC_PRIVKEY=$private_key"
-Environment="POPM_STATIC_FEE=700"
+Environment="POPM_STATIC_FEE=750"
 Environment="POPM_BFG_URL=wss://testnet.rpc.hemi.network/v1/ws/public"
 WorkingDirectory=$HOME/hemi
 ExecStart=$HOME/hemi/popmd
