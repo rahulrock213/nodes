@@ -24,18 +24,25 @@ download_node() {
   echo -e "Все порты свободны! Сейчас начнется установка...\n"
 
   sudo apt update -y && sudo apt upgrade -y
-  sudo apt-get install nano jq make software-properties-common make gnupg lsb-release ca-certificates curl
+  sudo apt-get install nano jq make software-properties-common apt-transport-https make gnupg lsb-release ca-certificates curl
 
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt update -y && sudo apt install -y docker-ce docker-ce-cli containerd.io
-  sudo usermod -aG docker $USER
-  sudo apt install -y docker-buildx-plugin docker-compose-plugin
+  if ! command -v docker &> /dev/null; then
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sudo sh get-docker.sh
+    sudo usermod -aG docker $USER
+  else
+    echo "Docker уже установлен. Пропускаем"
+  fi
 
-  sudo apt install docker.io -y
+  if ! command -v docker-compose &> /dev/null; then
+    sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+  else
+    echo "Docker-Compose уже установлен. Пропускаем"
+  fi
 
   read -p "Введите ваш приватный ключ кошелька: " priv_key
-  docker run -d -e PRIVATE_KEY=$priv_key --name glacier-verifier docker.io/glaciernetwork/glacier-verifier:v0.0.2
+  docker run -d -e PRIVATE_KEY=$priv_key --name glacier-verifier docker.io/glaciernetwork/glacier-verifier:v0.0.3
 
   if [ $? -eq 0 ]; then
     echo "Контейнер glacier-verifier успешно запущен."
@@ -46,6 +53,29 @@ download_node() {
 
 check_logs() {
   docker logs -f glacier-verifier --tail 300
+}
+
+update_node() {
+  echo 'Подождите...'
+
+  docker stop glacier-verifier
+  docker rm glacier-verifier
+
+  read -p "Введите ваш приватный ключ кошелька: " priv_key
+
+  read -p "Хотите сохранить приватный ключ на сервере для дальнейших обновлений? (y/n): " save_key
+
+  if [[ $save_key == "y" ]]; then
+    echo "$priv_key" > "$HOME/.glacier_key"
+    chmod 600 "$HOME/.glacier_key"
+    echo "Приватный ключ сохранен в $HOME/.glacier_key"
+  else
+    echo "Приватный ключ не будет сохранен."
+  fi
+
+  docker run -d -e PRIVATE_KEY=$priv_key --name glacier-verifier docker.io/glaciernetwork/glacier-verifier:v0.0.3
+
+  echo 'Нода была обновлена и запущена.'
 }
 
 restart_node() {
@@ -86,10 +116,11 @@ while true; do
     echo -e "\n\nМеню:"
     echo "1. 🚀 Установить ноду"
     echo "2. 📜 Посмотреть логи (выйти CTRL+C)"
-    echo "3. 🔄 Перезагрузить ноду"
-    echo "4. 🛑 Остановить ноду"
-    echo "5. 🗑️ Удалить ноду"
-    echo -e "6. 🚪 Выйти из скрипта\n"
+    echo '3. 🔰 Обновить ноду'
+    echo "4. 🔄 Перезагрузить ноду"
+    echo "5. 🛑 Остановить ноду"
+    echo "6. 🗑️ Удалить ноду"
+    echo -e "7. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -100,15 +131,18 @@ while true; do
         check_logs
         ;;
       3)
-        restart_node
+        update_node
         ;;
       4)
-        stop_node
+        restart_node
         ;;
       5)
-        delete_node
+        stop_node
         ;;
       6)
+        delete_node
+        ;;
+      7)
         exit_from_script
         ;;
       *)
