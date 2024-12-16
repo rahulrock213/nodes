@@ -42,7 +42,7 @@ download_node() {
   fi
 
   read -p "Введите ваш приватный ключ кошелька: " priv_key
-  docker run -d -e PRIVATE_KEY=$priv_key --name glacier-verifier docker.io/glaciernetwork/glacier-verifier:v0.0.3
+  docker run -d -e PRIVATE_KEY=$priv_key --name glacier-verifier docker.io/glaciernetwork/glacier-verifier:v0.0.4
 
   if [ $? -eq 0 ]; then
     echo "Контейнер glacier-verifier успешно запущен."
@@ -73,7 +73,7 @@ update_node() {
     echo "Приватный ключ не будет сохранен."
   fi
 
-  docker run -d -e PRIVATE_KEY=$priv_key --name glacier-verifier docker.io/glaciernetwork/glacier-verifier:v0.0.3
+  docker run -d -e PRIVATE_KEY=$priv_key --name glacier-verifier docker.io/glaciernetwork/glacier-verifier:v0.0.4
 
   echo 'Нода была обновлена и запущена.'
 }
