@@ -44,11 +44,10 @@ keep_download() {
   gaianet info
 
   read -p "Введите ваш Node ID (но перед этим зайдите по ссылке из гайда на сервере): " NEW_ID
+
   sed -i "s/0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62/$NEW_ID/g" config.json
-
   sed -i 's/const CHUNK_SIZE = 5;/const CHUNK_SIZE = 1;/g' bot_gaia.js
-
-  sleep 15
+  sed -i "s|https://0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62.us.gaianet.network/v1/chat/completions|$(jq -r '.url' config.json)|g" bot_gaia.js
 
   screen -dmS gaianetnode bash -c '
     echo "Начало выполнения скрипта в screen-сессии"
@@ -66,13 +65,30 @@ check_states() {
 }
 
 check_logs() {
-  screen -r gaianetnode
+  screen -S gaianetnode -X hardcopy /tmp/screen_log.txt && sleep 0.1 && tail -n 100 /tmp/screen_log.txt && rm /tmp/screen_log.txt
 }
 
 update_node() {
   cd $HOME
 
+  gaianet stop
+  sudo screen kill gaianetnode
+
   curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash -s -- --upgrade
+
+  gaianet start
+
+  cd $HOME/bot/gaianet
+
+  sed -i "s|https://0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62.us.gaianet.network/v1/chat/completions|$(jq -r '.url' config.json)|g" bot_gaia.js
+
+  screen -dmS gaianetnode bash -c '
+    echo "Начало выполнения скрипта в screen-сессии"
+
+    node bot_gaia.js
+
+    exec bash
+  '
 
   echo 'Нода обновилась...'
 }
