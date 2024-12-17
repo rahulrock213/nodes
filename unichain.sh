@@ -63,6 +63,28 @@ stop_node() {
   sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" down
 }
 
+update_node() {
+  HOMEDIR="$HOME"
+  sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" down
+
+  cd $HOME/unichain-node
+
+  git stash
+  git pull
+
+  if [[ -f .env.sepolia ]]; then
+    sed -i 's|^OP_NODE_L1_ETH_RPC=.*$|OP_NODE_L1_ETH_RPC=https://ethereum-sepolia-rpc.publicnode.com|' .env.sepolia
+    sed -i 's|^OP_NODE_L1_BEACON=.*$|OP_NODE_L1_BEACON=https://ethereum-sepolia-beacon-api.publicnode.com|' .env.sepolia
+  else
+    echo -e "Sepolia ENV не было найдено"
+    return
+  fi
+
+  sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" up -d
+
+  echo 'Нода была обновлена...'
+}
+
 display_private_key() {
   cd $HOME
   echo -e 'Ваш приватник: \n' && cat unichain-node/geth-data/geth/nodekey
@@ -78,12 +100,13 @@ while true; do
     echo -e "\n\nМеню:"
     echo "1. 🚀 Установить ноду"
     echo "2. 🔄 Перезагрузить ноду"
-    echo "3. ✅ Проверить ноду"
-    echo "4. 📜 Посмотреть логи Unichain (OP)"
+    echo "3. 🕵️ Проверить ноду"
+    echo "4. 📋 Посмотреть логи Unichain (OP)"
     echo "5. 📜 Посмотреть логи Unichain"
     echo "6. 🛑 Остановить ноду"
-    echo "7. 🔑 Посмотреть приватный ключ"
-    echo -e "8. ❌ Выйти из скрипта\n"
+    echo "7. 🆙 Обновить ноду"
+    echo "8. 🔑 Посмотреть приватный ключ"
+    echo -e "9. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -106,9 +129,12 @@ while true; do
         stop_node
         ;;
       7)
-        display_private_key
+        update_node
         ;;
       8)
+        display_private_key
+        ;;
+      9)
         exit_from_script
         ;;
       *)
