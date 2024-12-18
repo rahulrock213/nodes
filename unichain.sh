@@ -51,11 +51,11 @@ check_node() {
 }
 
 check_logs_op_node() {
-  sudo docker logs unichain-node-op-node-1
+  sudo docker logs unichain-node-op-node-1 --tail 300
 }
 
 check_logs_unichain() {
-  sudo docker logs unichain-node-execution-client-1
+  sudo docker logs unichain-node-execution-client-1 --tail 300
 }
 
 stop_node() {
