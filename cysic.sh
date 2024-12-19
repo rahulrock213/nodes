@@ -15,8 +15,16 @@ download_node() {
 
   echo 'Начинаю установку ноды...'
 
-  read -p "Введите адрес вашего EVM кошелька (начиная с 0x который): " EVM_WALLET
-  EVM_WALLET="0x${EVM_WALLET#0x}"
+  while true; do
+    read -p "Введите адрес вашего EVM кошелька (начиная с 0x который): " EVM_WALLET
+    CLEAN_WALLET="${EVM_WALLET#0x}"
+    if [[ ${#CLEAN_WALLET} == 40 ]]; then
+      EVM_WALLET="0x${CLEAN_WALLET}"
+      break
+    else
+      echo "Ошибка: Неверная длина адреса. EVM адрес должен быть 40 символов (без 0x) или 42 символа (с 0x)"
+    fi
+  done
 
   sudo apt update -y && sudo apt upgrade -y
   sudo apt-get install make screen build-essential software-properties-common curl git nano jq -y
