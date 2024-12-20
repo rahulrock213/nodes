@@ -56,7 +56,7 @@ EOF
 }
 
 check_logs() {
-  sudo journalctl -u cysic -f --no-hostname -o cat
+  sudo journalctl -u cysic -f -n 100
 }
 
 stop_node() {
