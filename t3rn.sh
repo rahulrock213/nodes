@@ -34,6 +34,7 @@ download_node() {
   export EXECUTOR_PROCESS_CLAIMS="true"
   export PRIVATE_KEY_LOCAL="$PRIVATE_KEY_LOCAL"
   export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l1rn"
+  export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
   cd $HOME/executor/executor/bin/
 
@@ -65,7 +66,7 @@ change_fee() {
         return
     fi
 
-    readp -p 'На какой газ GWEI вы хотите изменить? (по стандарту 10) ' GWEI_SET
+    read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 10) ' GWEI_SET
     
     cd $HOME/executor
     export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET
