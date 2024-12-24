@@ -66,6 +66,8 @@ change_fee() {
     fi
 
     readp -p 'На какой газ GWEI вы хотите изменить? (по стандарту 10) ' GWEI_SET
+    
+    cd $HOME/executor
     export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET
 
     echo 'Перезагружаю ноду...'
