@@ -69,7 +69,7 @@ change_fee() {
         return
     fi
 
-    read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 10) ' GWEI_SET
+    read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 30) ' GWEI_SET
     
     cd $HOME/executor
     export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET
