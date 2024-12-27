@@ -36,7 +36,7 @@ download_node() {
   export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l1rn"
   export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
   export RPC_ENDPOINTS_L1RN='https://brn.rpc.caldera.xyz/'
-  export EXECUTOR_MAX_L3_GAS_PRICE=30
+  export EXECUTOR_MAX_L3_GAS_PRICE=50
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
   cd $HOME/executor/executor/bin/
@@ -69,7 +69,7 @@ change_fee() {
         return
     fi
 
-    read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 30) ' GWEI_SET
+    read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 50) ' GWEI_SET
     
     cd $HOME/executor
     export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET
