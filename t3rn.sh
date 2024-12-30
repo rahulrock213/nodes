@@ -90,10 +90,18 @@ stop_node() {
 }
 
 auto_restart_node() {
-  while true; do
-    restart_node
-    sleep 7200
-  done
+  screen -dmS t3rnnode_auto bash -c '
+    echo "Начало выполнения скрипта в screen-сессии"
+
+    while true; do
+      restart_node
+      sleep 7200
+    done
+
+    exec bash
+  '
+
+  echo "Screen сессия 't3rnnode_auto' создана и нода будет перезагружаться каждые 2 часа..."
 }
 
 restart_node() {
