@@ -34,9 +34,6 @@ download_node() {
   export EXECUTOR_PROCESS_CLAIMS="true"
   export PRIVATE_KEY_LOCAL="$PRIVATE_KEY_LOCAL"
   export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l1rn"
-  export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
-  export RPC_ENDPOINTS_L1RN='https://brn.rpc.caldera.xyz/'
-  export EXECUTOR_MAX_L3_GAS_PRICE=50
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
   cd $HOME/executor/executor/bin/
@@ -69,7 +66,7 @@ change_fee() {
         return
     fi
 
-    read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 50) ' GWEI_SET
+    read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 10) ' GWEI_SET
     
     cd $HOME/executor
     export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET
@@ -90,6 +87,13 @@ stop_node() {
   else
     echo "Сессия t3rnnode не найдена."
   fi
+}
+
+auto_restart_node() {
+  while true; do
+    restart_node
+    sleep 7200
+  done
 }
 
 restart_node() {
@@ -140,8 +144,9 @@ while true; do
     echo "3. 🐾 Изменить комиссию"
     echo "4. 🛑 Остановить ноду"
     echo "5. 🔄 Перезапустить ноду"
-    echo "6. 🗑️ Удалить ноду"
-    echo -e "7. 🚪 Выйти из скрипта\n"
+    echo "6. 📈 Автоперезагрузка ноды"
+    echo "7. 🗑️ Удалить ноду"
+    echo -e "8. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -161,9 +166,12 @@ while true; do
         restart_node
         ;;
       6)
-        delete_node
+        auto_restart_node
         ;;
       7)
+        delete_node
+        ;;
+      8)
         exit_from_script
         ;;
       *)
