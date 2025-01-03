@@ -138,6 +138,13 @@ stop_node() {
 }
 
 auto_restart_node() {
+  if screen -list | grep -q "\.t3rnnode_auto"; then
+    sudo screen -X -S t3rnnode_auto quit
+    echo 'У вас уже был существующий скрин t3rnnode_auto. Он был удален'
+  else
+    echo 'Начинаю запуск...'
+  fi
+
   screen -dmS t3rnnode_auto bash -c '
     echo "Начало выполнения скрипта в screen-сессии"
 
