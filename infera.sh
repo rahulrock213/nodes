@@ -34,6 +34,14 @@ check_points() {
   echo -e "У вас столько поинтов: $total_points"
 }
 
+link_node() {
+  read -p "Введите ваш ACCOUNT ID с сайта infera: " acc_id
+
+  curl -s "http://localhost:11025/link_node/$acc_id"
+
+  echo 'Проверьте, что нода была привязана.'
+}
+
 watch_secrets() {
   curl http://localhost:11025/node_details | jq
 }
@@ -61,10 +69,13 @@ restart_node() {
 update_node() {
   echo 'Начинаю обновление ноды...'
 
+  if screen -list | grep -q "\.inferanode"; then
+    screen -S inferanode -p 0 -X stuff "^C"
+    sudo screen -X -S inferanode quit
+  fi
+
   sudo rm -rf ~/infera
-  curl -O https://www.infera.org/scripts/infera-linux-intel.sh
-  chmod +x ./infera-linux-intel.sh
-  ./infera-linux-intel.sh
+  curl -sSL http://downloads.infera.org/infera-linux-amd.sh | bash
 
   echo 'Нода была обновлена.'
 }
@@ -89,12 +100,13 @@ while true; do
     echo -e "\n\nМеню:"
     echo "1. 🌱 Установить ноду"
     echo "2. 📊 Проверить сколько поинтов"
-    echo "3. 📂 Посмотреть данные"
-    echo "4. 🕸️ Посмотреть логи"
-    echo "5. 🍴 Перезагрузить ноду"
-    echo "6. 🔄 Обновить ноду"
-    echo "7. ❌ Удалить ноду"
-    echo -e "8. 🚪 Выйти из скрипта\n"
+    echo "3. 🌍 Привязать ноду к сайту"
+    echo "4. 📂 Посмотреть данные"
+    echo "5. 🕸️ Посмотреть логи"
+    echo "6. 🍴 Перезагрузить ноду"
+    echo "7. 🔄 Обновить ноду"
+    echo "8. ❌ Удалить ноду"
+    echo -e "9. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -105,21 +117,24 @@ while true; do
         check_points
         ;;
       3)
-        watch_secrets
+        link_node
         ;;
       4)
-        check_logs
+        watch_secrets
         ;;
       5)
-        restart_node
+        check_logs
         ;;
       6)
-        update_node
+        restart_node
         ;;
       7)
-        delete_node
+        update_node
         ;;
       8)
+        delete_node
+        ;;
+      9)
         exit_from_script
         ;;
       *)
