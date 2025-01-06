@@ -77,6 +77,18 @@ update_node() {
   sudo rm -rf ~/infera
   curl -sSL http://downloads.infera.org/infera-linux-amd.sh | bash
 
+  chmod +x ./infera
+
+  screen -dmS inferanode bash -c '
+    echo "Начало выполнения скрипта в screen-сессии"
+
+    ./infera
+    source ~/.bashrc
+    init-infera
+
+    exec bash
+  '
+
   echo 'Нода была обновлена.'
 }
 
