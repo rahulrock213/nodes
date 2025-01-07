@@ -51,6 +51,10 @@ launch_node() {
   openledger-node --no-sandbox
 }
 
+check_logs() {
+  docker logs opl_worker
+}
+
 delete_node() {
   echo "Удаляем OpenLedger..."
 
@@ -72,8 +76,9 @@ while true; do
     echo -e "\n\nМеню:"
     echo "1. ✅ Установить ноду"
     echo "2. 🚀 Запустить ноду"
-    echo "3. ❌ Удалить ноду"
-    echo -e "4. 🚪 Выйти из скрипта\n"
+    echo "3. 📄 Проверить логи"
+    echo "4. ❌ Удалить ноду"
+    echo -e "5. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -84,9 +89,12 @@ while true; do
         launch_node
         ;;
       3)
-        delete_node
+        check_logs
         ;;
       4)
+        delete_node
+        ;;
+      5)
         exit_from_script
         ;;
       *)
