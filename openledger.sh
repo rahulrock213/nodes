@@ -58,6 +58,9 @@ check_logs() {
 delete_node() {
   echo "Удаляем OpenLedger..."
 
+  docker stop opl_worker
+  docker rm opl_worker
+
   sudo rm openledger-node-1.0.0.deb
   sudo rm openledger-node-1.0.0-linux.zip
 
