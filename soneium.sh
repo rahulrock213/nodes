@@ -41,8 +41,13 @@ download_node() {
     echo "Docker-Compose уже установлен. Пропускаем"
   fi
 
-  git clone https://github.com/Soneium/soneium-node.git
-  cd soneium-node/minato
+  mkdir soneium-minato-node
+  cd soneium-minato-node/
+
+  wget -O docker-compose.yml https://docs.soneium.org/assets/files/docker-compose-8e466c0e597e166af25a1007f1a17312.yml
+  wget -O minato-genesis.json https://docs.soneium.org/assets/files/minato-genesis-5e5db79442a6436778e9c3c80a9fd80d.json
+  wget -O minato-rollup.json https://docs.soneium.org/assets/files/minato-rollup-527fed518b6b3a453c3ebd91c51cfdc7.json
+  wget -O sample.env https://docs.soneium.org/assets/files/sample-0cebbc00b0f006ba569605dae6dadac2.env
 
   openssl rand -hex 32 > jwt.txt
   mv sample.env .env
@@ -64,7 +69,11 @@ download_node() {
   sed -i 's|^L1_BEACON=.*|L1_BEACON=https://ethereum-sepolia-beacon-api.publicnode.com|' .env
   sed -i "s|^P2P_ADVERTISE_IP=.*|P2P_ADVERTISE_IP=${SERVER_IP}|" .env
 
-  sed -i "s/<your_node_public_ip>/$SERVER_IP/g" docker-compose.yml
+  sed -i "/ports:/i \      --nat=extip:${SERVER_IP} \\" docker-compose.yml
+  sed -i "/ports:/i \      --p2p.advertise.ip=${SERVER_IP} \\" docker-compose.yml
+
+  sed -i '/op-geth-minato:/,/ports:/ {/--p2p.advertise.ip/d}' docker-compose.yml
+  sed -i '/op-node-minato:/,/ports:/ {/--nat/d}' docker-compose.yml
 
   docker-compose up -d
 
@@ -72,24 +81,24 @@ download_node() {
 }
 
 check_private_key() {
-  jwt_value=$(cat $HOME/soneium-node/minato/jwt.txt)
+  jwt_value=$(cat $HOME/soneium-minato-node/jwt.txt)
   echo $jwt_value
 }
 
 check_logs_op_node() {
-  cd $HOME/soneium-node/minato
+  cd $HOME/soneium-minato-node
   docker-compose logs -f op-node-minato --tail 300
 }
 
 check_logs_op_minato() {
-  cd $HOME/soneium-node/minato
+  cd $HOME/soneium-minato-node
   docker-compose logs -f op-geth-minato --tail 300
 }
 
 restart_node() {
   echo 'Начинаю перезагрузку...'
 
-  cd $HOME/soneium-node/minato
+  cd $HOME/soneium-minato-node
   sudo docker-compose down
   sudo docker-compose up -d
 
@@ -99,7 +108,7 @@ restart_node() {
 stop_node() {
   echo 'Начинаю остановку...'
 
-  cd $HOME/soneium-node/minato
+  cd $HOME/soneium-minato-node
   sudo docker-compose down
   
   echo 'Ноды были остановлены.'
@@ -108,7 +117,7 @@ stop_node() {
 clear_data_containers() {
   echo 'Начинаю удаления кэша...'
 
-  cd $HOME/soneium-node/minato
+  cd $HOME/soneium-minato-node
   sudo docker-compose down --volumes --remove-orphans
 
   echo 'Кэш был удален и нода остановлена. Если захотите снова запустить, нажимайте в скрипте: перезагрузить ноду'
@@ -117,7 +126,7 @@ clear_data_containers() {
 delete_node() {
   read -p 'Если вы уверены удалить ноду, напишите любой символ (CTRL+C чтобы выйти): ' checkjust
 
-  cd $HOME/soneium-node/minato
+  cd $HOME/soneium-minato-node
   sudo docker-compose down --volumes --remove-orphans
   sudo docker rmi $(docker images | grep "us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node" | awk '{print $1 ":" $2}')
   sudo docker rmi $(docker images | grep "us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth" | awk '{print $1 ":" $2}')
