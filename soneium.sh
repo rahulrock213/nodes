@@ -23,6 +23,8 @@ download_node() {
 
   echo -e "Все порты свободны! Сейчас начнется установка...\n"
 
+  cd $HOME
+
   sudo apt update -y && sudo apt upgrade -y
   sudo apt install screen curl git jq nano gnupg build-essential ca-certificates wget lz4 gcc make ca-certificates lsb-release software-properties-common apt-transport-https -y
 
