@@ -21,7 +21,7 @@ download_node() {
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
   bash -c "source ~/.bashrc"
 
-  curl -O gaia_install.sh 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
+  curl -O gaia_install.sh 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh'
   sed -i 's|curl -sSf https://raw\.githubusercontent\.com/WasmEdge/WasmEdge/master/utils/install_v2\.sh | bash -s -- -v $wasmedge_version --ggmlbn=$ggml_bn --tmpdir=$tmp_dir|curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install_v2.sh | bash -s -- -v 0.14.1 --noavx|g' gaia_install.sh
   bash gaia_install.sh
   bash -c "source ~/.bashrc"
