@@ -19,18 +19,20 @@ download_node() {
   sudo apt-get install -y nodejs
 
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-  source ~/.bashrc
+  bash -c "source ~/.bashrc"
 
-  curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
-  source ~/.bashrc
+  curl -O gaia_install.sh 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
+  sed -i 's|curl -sSf https://raw\.githubusercontent\.com/WasmEdge/WasmEdge/master/utils/install_v2\.sh | bash -s -- -v $wasmedge_version --ggmlbn=$ggml_bn --tmpdir=$tmp_dir|curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install_v2.sh | bash -s -- -v 0.14.1 --noavx|g' gaia_install.sh
+  bash gaia_install.sh
+  bash -c "source ~/.bashrc"
 }
 
 keep_download() {
-  source /root/.bashrc
+  bash -c "source ~/.bashrc"
 
   gaianet init --config https://raw.gaianet.ai/qwen2-0.5b-instruct/config.json
 
-  curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install_v2.sh | bash -s -- -v 0.13.5 --noavx
+  #curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install_v2.sh | bash -s -- -v 0.13.5 --noavx
 
   gaianet start
 
@@ -45,9 +47,9 @@ keep_download() {
 
   read -p "Введите ваш Node ID (но перед этим зайдите по ссылке из гайда на сервере): " NEW_ID
 
-  sed -i "s/0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62/$NEW_ID/g" config.json
+  sed -i "s/0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62.us.gaianet.network/${NEW_ID}.gaia.domains/g" config.json
   sed -i 's/const CHUNK_SIZE = 5;/const CHUNK_SIZE = 1;/g' bot_gaia.js
-  sed -i "s|https://0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62.us.gaianet.network/v1/chat/completions|$(jq -r '.url' config.json)|g" bot_gaia.js
+  sed -i "s|https://0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62.gaia.domains/v1/chat/completions|$(jq -r '.url' config.json)|g" bot_gaia.js
 
   screen -dmS gaianetnode bash -c '
     echo "Начало выполнения скрипта в screen-сессии"
@@ -72,7 +74,7 @@ update_node() {
   cd $HOME
 
   gaianet stop
-  sudo screen kill gaianetnode
+  screen -ls | grep gaianetnode | cut -d. -f1 | awk '{print $1}' | xargs kill
 
   curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash -s -- --upgrade
 
@@ -81,6 +83,9 @@ update_node() {
   cd $HOME/bot/gaianet
 
   sed -i "s|https://0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62.us.gaianet.network/v1/chat/completions|$(jq -r '.url' config.json)|g" bot_gaia.js
+
+  sed -i 's/.us.gaianet.network/.gaia.domains/g' config.json
+  sed -i 's/.us.gaianet.network/.gaia.domains/g' bot_gaia.js 
 
   screen -dmS gaianetnode bash -c '
     echo "Начало выполнения скрипта в screen-сессии"
@@ -103,9 +108,11 @@ stop_node() {
 
 delete_node() {
   cd $HOME
+  gaianet stop
   curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/uninstall.sh' | bash
   sudo rm -r bot/
   sudo rm -r gaianet/
+  screen -ls | grep gaianetnode | cut -d. -f1 | awk '{print $1}' | xargs kill
 }
 
 exit_from_script() {
