@@ -78,6 +78,8 @@ update_node() {
 
   curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash -s -- --upgrade
 
+  gaianet init --config https://raw.gaianet.ai/qwen2-0.5b-instruct/config.json
+
   gaianet start
 
   cd $HOME/bot/gaianet
