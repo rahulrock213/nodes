@@ -11,7 +11,7 @@ channel_logo() {
 
 download_node() {
   if [ -f "wallet_hyperlane.json" ]; then
-    echo "Нода уже существует. Выполнение остановлено. Удалите ноду"
+    echo "Нода уже существует. Выполнение остановлено. Удалите ноду если хотите установить заново"
     exit 1
   fi
 
@@ -61,9 +61,6 @@ download_node() {
   foundryup
 
   cast wallet new --json > wallet_hyperlane.json
-  cat wallet_hyperlane.json
-
-  read -p "Сохраните данные от кошелька в надежном месте. Как сохраните, введите любой символ/букву/цифру: " checkjust
 
   npm install -g @hyperlane-xyz/cli
 
@@ -108,7 +105,7 @@ run_validator() {
   docker run -d \
     -it \
     --name hyperlane \
-    --mount type=bind,source=/root/hyperlane_db_$CHAIN,target=/hyperlane_db_$CHAIN \
+    --mount type=bind,source=$HOME/hyperlane_db_$CHAIN,target=/hyperlane_db_$CHAIN \
     gcr.io/abacus-labs-dev/hyperlane-agent:agents-v1.0.0 \
     ./validator \
     --db /hyperlane_db_$CHAIN \
