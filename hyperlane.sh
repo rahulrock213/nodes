@@ -24,19 +24,11 @@ download_node() {
 
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
 
-  grep -qxF 'export NVM_DIR="$HOME/.nvm"' ~/.bashrc || echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
-  grep -qxF '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' ~/.bashrc || echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
-  grep -qxF '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' ~/.bashrc || echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.bashrc
-
-  mkdir -p "$HOME/.nvm"
-
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
   eval "$(cat ~/.bashrc | tail -n +10)"
-
-  exec bash
 
   nvm install 20
 
@@ -57,7 +49,7 @@ download_node() {
   fi
 
   curl -L https://foundry.paradigm.xyz | bash
-  exec bash
+  eval "$(cat ~/.bashrc | tail -n +10)"
   foundryup
 
   cast wallet new --json > wallet_hyperlane.json
