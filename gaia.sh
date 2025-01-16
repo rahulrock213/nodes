@@ -130,7 +130,6 @@ link_domain() {
       echo "Не было найдена адреса/домена в config.json"
   fi
 
-  # Process bot_gaia.js
   current_domain=$(grep -o 'https://[^.]*\.gaia\.domains' bot_gaia.js | sed 's|https://||;s|\.gaia\.domains||')
   if [ ! -z "$current_domain" ]; then
       sed -i "s|https://$current_domain\.gaia\.domains|https://$new_domain.gaia.domains|g" bot_gaia.js
