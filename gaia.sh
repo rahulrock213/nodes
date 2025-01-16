@@ -39,7 +39,7 @@ keep_download() {
 
   mkdir bot
   cd bot
-  git clone https://github.com/0xdmimaz/gaianet/
+  git clone https://github.com/londrwus/gaianet
   cd gaianet
   npm i
 
@@ -100,6 +100,58 @@ update_node() {
   echo 'Нода обновилась...'
 }
 
+link_domain() {
+  cd $HOME/bot/gaianet
+
+  if [ ! -f "config.json" ] || [ ! -f "bot_gaia.js" ]; then
+      echo "Ошибка: config.json или bot_gaia.js не найдены в папке"
+      exit 1
+  fi
+
+  screen -ls | grep gaianetnode | cut -d. -f1 | awk '{print $1}' | xargs kill
+  gaianet stop
+  gaianet config --domain gaia.domains
+  gaianet init
+
+  read -p "Введите ваш домен: " domain_input
+
+  new_domain=${domain_input%.gaia.domains}
+
+  if [ -z "$new_domain" ]; then
+      echo "Ошибка: ваш домен не может быть пустым"
+      exit 1
+  fi
+
+  current_domain=$(grep -o 'https://[^.]*\.gaia\.domains' config.json | sed 's|https://||;s|\.gaia\.domains||')
+  if [ ! -z "$current_domain" ]; then
+      sed -i "s|https://$current_domain\.gaia\.domains|https://$new_domain.gaia.domains|g" config.json
+      echo "config.json: Заменил $current_domain на $new_domain"
+  else
+      echo "Не было найдена адреса/домена в config.json"
+  fi
+
+  # Process bot_gaia.js
+  current_domain=$(grep -o 'https://[^.]*\.gaia\.domains' bot_gaia.js | sed 's|https://||;s|\.gaia\.domains||')
+  if [ ! -z "$current_domain" ]; then
+      sed -i "s|https://$current_domain\.gaia\.domains|https://$new_domain.gaia.domains|g" bot_gaia.js
+      echo "bot_gaia.js: Заменил $current_domain на $new_domain"
+  else
+      echo "Не было найдена адреса/домена в bot_gaia.js"
+  fi
+
+  gaianet start
+
+  screen -dmS gaianetnode bash -c '
+    echo "Начало выполнения скрипта в screen-сессии"
+
+    node bot_gaia.js
+
+    exec bash
+  '
+
+  echo "Замена домена была выполнена!"
+}
+
 start_node() {
   gaianet start
 }
@@ -130,10 +182,11 @@ while true; do
     echo "3. 📊 Посмотреть данные"
     echo "4. 🟦 Посмотреть логи"
     echo "5. 🔄 Обновить ноду"
-    echo "6. 🚀 Запустить ноду"
-    echo "7. 🛑 Остановить ноду"
-    echo "8. 🗑️ Удалить ноду"
-    echo -e "9. 👋 Выйти из скрипта\n"
+    echo "6. 🔗 Привязать домен"
+    echo "7. 🚀 Запустить ноду"
+    echo "8. 🛑 Остановить ноду"
+    echo "9. 🗑️ Удалить ноду"
+    echo -e "10. 👋 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -153,15 +206,18 @@ while true; do
         update_node
         ;;
       6)
-        start_node
+        link_domain
         ;;
       7)
-        stop_node
+        start_node
         ;;
       8)
-        delete_node
+        stop_node
         ;;
       9)
+        delete_node
+        ;;
+      10)
         exit_from_script
         ;;
       *)
