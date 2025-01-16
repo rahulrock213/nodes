@@ -120,7 +120,9 @@ change_fee() {
 
     if screen -list | grep -q "\.${session}"; then
       screen -S "${session}" -p 0 -X stuff "^C"
+      sleep 1
       screen -S "${session}" -p 0 -X stuff "export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET\n"
+      sleep 1
       screen -S "${session}" -p 0 -X stuff "./executor\n"
       echo 'Комиссия была изменена.'
     else
