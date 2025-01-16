@@ -118,15 +118,15 @@ change_fee() {
 
     read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 105) ' GWEI_SET
 
-    screen -S "${session}" -p 0 -X stuff "^C"
-    screen -S "${session}" -p 0 -X stuff "export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET\n"
-    screen -S "${session}" -p 0 -X stuff "./executor\n"
-
-    echo 'Перезагружаю ноду...'
-
-    restart_node
-
-    echo 'Комиссия была изменена.'
+    if screen -list | grep -q "\.${session}"; then
+      screen -S "${session}" -p 0 -X stuff "^C"
+      screen -S "${session}" -p 0 -X stuff "export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET\n"
+      screen -S "${session}" -p 0 -X stuff "./executor\n"
+      echo 'Комиссия была изменена.'
+    else
+      echo "Сессия ${session} не найдена. Газ не может поменяться"
+      return
+    fi
 }
 
 stop_node() {
