@@ -35,7 +35,7 @@ update_node() {
   export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l1rn"
   export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
   export RPC_ENDPOINTS_L1RN='https://brn.rpc.caldera.xyz/'
-  export EXECUTOR_MAX_L3_GAS_PRICE=105
+  export EXECUTOR_MAX_L3_GAS_PRICE=150
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
   cd $HOME/executor/executor/bin/
@@ -114,10 +114,13 @@ change_fee() {
         return
     fi
 
+    session="t3rnnode"
+
     read -p 'На какой газ GWEI вы хотите изменить? (по стандарту 105) ' GWEI_SET
-    
-    cd $HOME/executor
-    export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET
+
+    screen -S "${session}" -p 0 -X stuff "^C"
+    screen -S "${session}" -p 0 -X stuff "export EXECUTOR_MAX_L3_GAS_PRICE=$GWEI_SET\n"
+    screen -S "${session}" -p 0 -X stuff "./executor\n"
 
     echo 'Перезагружаю ноду...'
 
