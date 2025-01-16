@@ -84,7 +84,7 @@ update_node() {
 
   cd $HOME/bot/gaianet
 
-  sed -i "s|https://0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62.us.gaianet.network/v1/chat/completions|$(jq -r '.url' config.json)|g" bot_gaia.js
+  sed -i "s|https://0x0aa110d2e3a2f14fc122c849cea06d1bc9ed1c62.gaia.domains/v1/chat/completions|$(jq -r '.url' config.json)|g" bot_gaia.js
 
   sed -i 's/.us.gaianet.network/.gaia.domains/g' config.json
   sed -i 's/.us.gaianet.network/.gaia.domains/g' bot_gaia.js 
