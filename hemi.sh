@@ -18,10 +18,10 @@ download_node() {
   eval $(echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/golang.sh)
   eval $(echo 'export PATH=$PATH:$HOME/go/bin' | tee -a $HOME/.profile)
 
-  wget https://github.com/hemilabs/heminetwork/releases/download/v0.11.0/heminetwork_v0.11.0_linux_amd64.tar.gz
+  wget https://github.com/hemilabs/heminetwork/releases/download/v0.11.1/heminetwork_v0.11.1_linux_amd64.tar.gz
   mkdir -p hemi
-  tar --strip-components=1 -xzvf heminetwork_v0.11.0_linux_amd64.tar.gz -C hemi
-  sudo rm -rf heminetwork_v0.11.0_linux_amd64.tar.gz
+  tar --strip-components=1 -xzvf heminetwork_v0.11.1_linux_amd64.tar.gz -C hemi
+  sudo rm -rf heminetwork_v0.11.1_linux_amd64.tar.gz
 
   cd hemi/
 
@@ -199,10 +199,10 @@ update_node() {
 
   sudo apt-get update -y && sudo apt upgrade -y
 
-  wget https://github.com/hemilabs/heminetwork/releases/download/v0.11.0/heminetwork_v0.11.0_linux_amd64.tar.gz
+  wget https://github.com/hemilabs/heminetwork/releases/download/v0.11.1/heminetwork_v0.11.1_linux_amd64.tar.gz
   mkdir -p hemi
-  tar --strip-components=1 -xzvf heminetwork_v0.11.0_linux_amd64.tar.gz -C hemi
-  sudo rm -rf heminetwork_v0.11.0_linux_amd64.tar.gz
+  tar --strip-components=1 -xzvf heminetwork_v0.11.1_linux_amd64.tar.gz -C hemi
+  sudo rm -rf heminetwork_v0.11.1_linux_amd64.tar.gz
 
   cd hemi/
 
