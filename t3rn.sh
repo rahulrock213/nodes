@@ -34,7 +34,8 @@ update_node() {
   export PRIVATE_KEY_LOCAL="$PRIVATE_KEY_LOCAL"
   export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l1rn"
   export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
-  export RPC_ENDPOINTS_L1RN='https://brn.calderarpc.com/'
+  export RPC_ENDPOINTS_L1RN="https://brn.calderarpc.com/"
+  export RPC_ENDPOINTS_ARBT="https://api.zan.top/arb-sepolia"
   export EXECUTOR_MAX_L3_GAS_PRICE=150
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
@@ -80,7 +81,8 @@ download_node() {
   export PRIVATE_KEY_LOCAL="$PRIVATE_KEY_LOCAL"
   export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l1rn"
   export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
-  export RPC_ENDPOINTS_L1RN='https://brn.calderarpc.com/'
+  export RPC_ENDPOINTS_L1RN="https://brn.calderarpc.com/"
+  export RPC_ENDPOINTS_ARBT="https://api.zan.top/arb-sepolia"
   export EXECUTOR_MAX_L3_GAS_PRICE=105
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
