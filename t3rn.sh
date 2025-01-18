@@ -21,7 +21,7 @@ update_node() {
 
   cd $HOME
 
-  sudo wget https://github.com/t3rn/executor-release/releases/download/v0.36.0/executor-linux-v0.36.0.tar.gz -O executor-linux.tar.gz
+  sudo wget https://github.com/t3rn/executor-release/releases/download/v0.38.0/executor-linux-v0.38.0.tar.gz -O executor-linux.tar.gz
   sudo tar -xzvf executor-linux.tar.gz
   sudo rm -rf executor-linux.tar.gz
   cd executor
@@ -34,7 +34,7 @@ update_node() {
   export PRIVATE_KEY_LOCAL="$PRIVATE_KEY_LOCAL"
   export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l1rn"
   export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
-  export RPC_ENDPOINTS_L1RN='https://brn.rpc.caldera.xyz/'
+  export RPC_ENDPOINTS_L1RN='https://brn.calderarpc.com/'
   export EXECUTOR_MAX_L3_GAS_PRICE=150
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
@@ -67,7 +67,7 @@ download_node() {
 
   cd $HOME
 
-  sudo wget https://github.com/t3rn/executor-release/releases/download/v0.29.0/executor-linux-v0.29.0.tar.gz -O executor-linux.tar.gz
+  sudo wget https://github.com/t3rn/executor-release/releases/download/v0.38.0/executor-linux-v0.38.0.tar.gz -O executor-linux.tar.gz
   sudo tar -xzvf executor-linux.tar.gz
   sudo rm -rf executor-linux.tar.gz
   cd executor
@@ -80,7 +80,7 @@ download_node() {
   export PRIVATE_KEY_LOCAL="$PRIVATE_KEY_LOCAL"
   export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l1rn"
   export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
-  export RPC_ENDPOINTS_L1RN='https://brn.rpc.caldera.xyz/'
+  export RPC_ENDPOINTS_L1RN='https://brn.calderarpc.com/'
   export EXECUTOR_MAX_L3_GAS_PRICE=105
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
