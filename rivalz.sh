@@ -60,7 +60,7 @@ while true; do
         rivalz run
         ;;
       2)
-        npm i -g rivalz-node-cli@2.6.2
+        npm i -g rivalz-node-cli@3.0.1
 
         rivalz run
         ;;
