@@ -29,13 +29,21 @@ download_node() {
 
   sudo apt install screen net-tools iptables jq curl -y
 
-  wget https://network3.io/ubuntu-node-v2.1.1.tar.gz
-  tar -xvf ubuntu-node-v2.1.1.tar.gz
-  sudo rm -rf ubuntu-node-v2.1.1.tar.gz
+  wget https://network3.io/ubuntu-node-v2.1.0.tar
+  tar -xvf ubuntu-node-v2.1.0.tar
+  sudo rm -rf ubuntu-node-v2.1.0.tar
 
-  cd ubuntu-node
+  cd $HOME/ubuntu-node
 
-  screen -S network3
+  screen -dmS network3 bash -c '
+    echo "Начало выполнения скрипта в screen-сессии"
+
+    sudo bash manager.sh up
+
+    exec bash
+  '
+
+  echo 'Ваша нода была запущена.'
 }
 
 launch_node() {
@@ -59,23 +67,6 @@ check_private_key() {
   sudo bash manager.sh key
 }
 
-update_node() {
-  cd $HOME/ubuntu-node
-  sudo bash manager.sh key
-
-  read -p '(!) СОХРАНИЕ ВАШ ПРИВАТНЫЙ КЛЮЧ В НАДЕЖНОМ МЕСТЕ, КАК ЭТО СДЕЛАЕТЕ, ВВЕДИТЕ ЛЮБОЙ СИМВОЛ: ' checkjust
-
-  cd $HOME
-  sudo rm -r ubuntu-node
-
-  wget https://network3.io/ubuntu-node-v2.1.1.tar.gz
-  tar -xvf ubuntu-node-v2.1.1.tar.gz
-  sudo rm -rf ubuntu-node-v2.1.1.tar.gz
-
-
-  screen -S network3 -X stuff "cd ubuntu-node$(printf \\r)sudo bash manager.sh up$(printf \\r)"
-}
-
 exit_from_script() {
   exit 0
 }
@@ -89,8 +80,7 @@ while true; do
     echo "3. ⛔ Остановить ноду"
     echo "4. 🎯 Проверить количество поинтов"
     echo "5. 🔑 Посмотреть приватный ключ"
-    echo "6. 💻 Обновить ноду"
-    echo -e "7. ❌ Выйти из скрипта\n"
+    echo -e "6. ❌ Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -110,9 +100,6 @@ while true; do
         check_private_key
         ;;
       6)
-        update_node
-        ;;
-      7)
         exit_from_script
         ;;
       *)
