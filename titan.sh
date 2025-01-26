@@ -66,7 +66,7 @@ launch_node() {
 }
 
 docker_logs() {
-  docker logs $(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
+  docker logs $(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
 }
 
 restart_node() {
