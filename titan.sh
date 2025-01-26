@@ -70,12 +70,12 @@ docker_logs() {
 }
 
 restart_node() {
-  docker restart $(docker logs $(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}"))
+  docker restart $(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
   echo 'Нода была перезагружена.'
 }
 
 stop_node() {
-  docker stop $(docker logs $(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}"))
+  docker stop $(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
   echo 'Нода была остановлена.'
 }
 
