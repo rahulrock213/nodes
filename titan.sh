@@ -40,7 +40,7 @@ download_node() {
 }
 
 launch_node() {
-  container_id=$(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
+  container_id=$(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
 
   if [ -n "$container_id" ]; then
     echo "Найден контейнер: $container_id"
@@ -70,19 +70,19 @@ docker_logs() {
 }
 
 restart_node() {
-  docker restart $(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
+  docker restart $(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
   echo 'Нода была перезагружена.'
 }
 
 stop_node() {
-  docker stop $(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
+  docker stop $(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
   echo 'Нода была остановлена.'
 }
 
 delete_node() {
   read -p 'Если вы уверены удалить ноду, напишите любой символ (CTRL+C чтобы выйти): ' checkjust
 
-  docker_id=$(docker ps --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
+  docker_id=$(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
   docker stop $docker_id
   docker rm $docker_id
 
