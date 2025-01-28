@@ -53,13 +53,10 @@ download_node() {
 }
 
 launch_node() {
-  container_id=$(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
-
-  if [ -n "$container_id" ]; then
-    echo "Найден контейнер: $container_id"
-    docker stop $container_id
-    docker rm $container_id
-  fi
+  docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}" | shuf -n $(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}" | wc -l) | while read container_id; do
+    docker stop "$container_id"
+    docker rm "$container_id"
+  done
 
   while true; do
     echo -en "Введите ваш HASH:${NC} "
