@@ -21,7 +21,7 @@ update_node() {
 
   cd $HOME
 
-  sudo wget https://github.com/t3rn/executor-release/releases/download/v0.46.0/executor-linux-v0.46.0.tar.gz -O executor-linux.tar.gz
+  sudo wget https://github.com/t3rn/executor-release/releases/download/v0.47.0/executor-linux-v0.47.0.tar.gz -O executor-linux.tar.gz
   sudo tar -xzvf executor-linux.tar.gz
   sudo rm -rf executor-linux.tar.gz
   cd executor
@@ -36,7 +36,7 @@ update_node() {
   export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
   export RPC_ENDPOINTS_L1RN="https://brn.calderarpc.com/"
   export RPC_ENDPOINTS_ARBT="https://api.zan.top/arb-sepolia"
-  export EXECUTOR_MAX_L3_GAS_PRICE=150
+  export EXECUTOR_MAX_L3_GAS_PRICE=1000
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
   cd $HOME/executor/executor/bin/
@@ -68,7 +68,7 @@ download_node() {
 
   cd $HOME
 
-  sudo wget https://github.com/t3rn/executor-release/releases/download/v0.46.0/executor-linux-v0.46.0.tar.gz -O executor-linux.tar.gz
+  sudo wget https://github.com/t3rn/executor-release/releases/download/v0.47.0/executor-linux-v0.47.0.tar.gz -O executor-linux.tar.gz
   sudo tar -xzvf executor-linux.tar.gz
   sudo rm -rf executor-linux.tar.gz
   cd executor
@@ -83,7 +83,7 @@ download_node() {
   export RPC_ENDPOINTS_BSSP="https://base-sepolia-rpc.publicnode.com"
   export RPC_ENDPOINTS_L1RN="https://brn.calderarpc.com/"
   export RPC_ENDPOINTS_ARBT="https://api.zan.top/arb-sepolia"
-  export EXECUTOR_MAX_L3_GAS_PRICE=105
+  export EXECUTOR_MAX_L3_GAS_PRICE=1000
   export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="false"
 
   cd $HOME/executor/executor/bin/
