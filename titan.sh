@@ -104,13 +104,10 @@ net.core.wmem_default=26214400
 }
 
 many_node() {
-  container_ids=$(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}")
-
-  if [ -n "$container_ids" ]; then
-    echo "Найден контейнер: $container_ids"
-    docker stop $container_ids
-    docker rm $container_ids
-  fi
+  docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}" | shuf -n $(docker ps -a --filter "ancestor=nezha123/titan-edge" --format "{{.ID}}" | wc -l) | while read container_id; do
+    docker stop "$container_id"
+    docker rm "$container_id"
+  done
 
   echo -e "Введите ваш HASH:"
   read -p "> " id
