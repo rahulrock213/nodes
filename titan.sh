@@ -124,7 +124,7 @@ many_node() {
   start_port=1235
   container_count=5
 
-  public_ips=$(curl -s ifconfig.me)
+  public_ips=$(curl -s https://api.ipify.org)
 
   if [ -z "$public_ips" ]; then
     echo -e "Не смог получить IP адрес."
