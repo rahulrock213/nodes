@@ -76,7 +76,21 @@ check_logs() {
 }
 
 restart_node() {
-  docker restart $(docker ps --filter "ancestor=privasea/acceleration-node-beta:latest" --filter "status=running" --format "{{.ID}}")
+  RUNNING_CONTAINER=$(docker ps --filter "ancestor=privasea/acceleration-node-beta:latest" --filter "status=running" --format "{{.ID}}")
+
+  if [ ! -z "$RUNNING_CONTAINER" ]; then
+      echo "Перезапускаем работающий контейнер..."
+      docker restart $RUNNING_CONTAINER
+  else
+      EXITED_CONTAINER=$(docker ps --filter "ancestor=privasea/acceleration-node-beta:latest" --filter "status=exited" --format "{{.ID}}" --latest)
+      
+      if [ ! -z "$EXITED_CONTAINER" ]; then
+          echo "Перезапускаем последний остановленный контейнер..."
+          docker restart $EXITED_CONTAINER
+      else
+          echo "Не найдено подходящих контейнеров для перезапуска"
+      fi
+  fi
 }
 
 stop_node() {
