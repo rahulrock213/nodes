@@ -46,7 +46,7 @@ download_node() {
   mkdir soneium-minato-node
   cd soneium-minato-node/
 
-  wget -O docker-compose.yml https://docs.soneium.org/assets/files/docker-compose-8e466c0e597e166af25a1007f1a17312.yml
+  wget -O docker-compose.yml https://docs.soneium.org/assets/files/docker-compose-050b868cd6979d02fd02cd804fea5a32.yml
   wget -O minato-genesis.json https://docs.soneium.org/assets/files/minato-genesis-5e5db79442a6436778e9c3c80a9fd80d.json
   wget -O minato-rollup.json https://docs.soneium.org/assets/files/minato-rollup-527fed518b6b3a453c3ebd91c51cfdc7.json
   wget -O sample.env https://docs.soneium.org/assets/files/sample-0cebbc00b0f006ba569605dae6dadac2.env
