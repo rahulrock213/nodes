@@ -23,14 +23,8 @@ download_node() {
 
   git clone https://github.com/Uniswap/unichain-node
   cd unichain-node || { echo -e "Не получилось зайти в директорию"; return; }
-  
-  if [[ -f .env.sepolia ]]; then
-    sed -i 's|^OP_NODE_L1_ETH_RPC=.*$|OP_NODE_L1_ETH_RPC=https://ethereum-sepolia-rpc.publicnode.com|' .env.sepolia
-    sed -i 's|^OP_NODE_L1_BEACON=.*$|OP_NODE_L1_BEACON=https://ethereum-sepolia-beacon-api.publicnode.com|' .env.sepolia
-  else
-    echo -e "Sepolia ENV не было найдено"
-    return
-  fi
+
+  sed -i '/^[[:space:]]*#.*\.env\.mainnet/s/^[[:space:]]*#/ /' docker-compose.yml
 
   sudo docker-compose up -d
 }
@@ -64,15 +58,49 @@ stop_node() {
 }
 
 update_node() {
+  cd $HOME
+
   HOMEDIR="$HOME"
   sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" down
 
-  cd $HOME/unichain-node
+  op_node_container=$(docker ps --filter "name=op-node" --format "{{.ID}}")
+  op_geth_container=$(docker ps --filter "name=op-geth" --format "{{.ID}}")
 
-  git stash
-  git pull
+  docker stop "$op_node_container"
+  docker stop "$op_geth_container"
+
+  docker rm "$op_node_container"
+  docker rm "$op_geth_container"
+
+  P2P_PRIV_KEY=$(cat $HOME/unichain-node/opnode-data/opnode_p2p_priv.txt)
+  GETH_PRIV_KEY=$(cat $HOME/unichain-node/geth-data/geth/nodekey)
+
+  if [ -z "$P2P_PRIV_KEY" ] || [ -z "$GETH_PRIV_KEY" ]; then
+    echo "Один из приватников пустой. Выходим..."
+    exit 1
+  else
+    echo "Продолжаем."
+  fi
+
+  sudo rm -rf unichain-node/
+  git clone https://github.com/Uniswap/unichain-node
+
+  cd unichain-node
 
   sed -i '/^[[:space:]]*#.*\.env\.mainnet/s/^[[:space:]]*#/ /' docker-compose.yml
+
+  mkdir opnode-data
+  cd opnode-data
+  echo $P2P_PRIV_KEY > opnode_p2p_priv.txt
+
+  cd $HOME/unichain-node
+  mkdir geth-data
+  cd geth-data
+  mkdir geth
+  cd geth
+  echo $GETH_PRIV_KEY > nodekey
+
+  cd $HOME/unichain-node
 
   sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" up -d
 
@@ -81,7 +109,8 @@ update_node() {
 
 display_private_key() {
   cd $HOME
-  echo -e 'Ваш приватник: \n' && cat unichain-node/geth-data/geth/nodekey
+  echo -e 'Ваш приватник GETH: \n' && cat unichain-node/geth-data/geth/nodekey
+  echo -e 'Ваш приватник OP-NODE: \n' && cat unichain-node/opnode-data/opnode_p2p_priv.txt
 }
 
 exit_from_script() {
