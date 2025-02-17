@@ -72,17 +72,11 @@ update_node() {
   git stash
   git pull
 
-  if [[ -f .env.sepolia ]]; then
-    sed -i 's|^OP_NODE_L1_ETH_RPC=.*$|OP_NODE_L1_ETH_RPC=https://ethereum-sepolia-rpc.publicnode.com|' .env.sepolia
-    sed -i 's|^OP_NODE_L1_BEACON=.*$|OP_NODE_L1_BEACON=https://ethereum-sepolia-beacon-api.publicnode.com|' .env.sepolia
-  else
-    echo -e "Sepolia ENV не было найдено"
-    return
-  fi
+  sed -i '/^[[:space:]]*#.*\.env\.mainnet/s/^[[:space:]]*#/ /' docker-compose.yml
 
   sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" up -d
 
-  echo 'Нода была обновлена...'
+  echo 'Нода была обновлена и запущенеа.'
 }
 
 display_private_key() {
