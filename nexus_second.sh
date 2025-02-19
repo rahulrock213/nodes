@@ -88,6 +88,7 @@ try_to_fix() {
           sleep 1
           screen -S "${session}" -p 0 -X stuff "cargo run --release -- --start --beta"
           echo 'Проверяйте ваши логи.'
+          ;;
       *)
           echo "Некорректный ввод. Пожалуйста, выберите верные пункты."
           ;;
