@@ -28,7 +28,6 @@ download_node() {
   source ~/.bashrc
   rustup update
 
-  rustup target add riscv32i-unknown-none-elf
   mkdir -p $HOME/.config/cli
 
   screen -dmS nexusnode bash -c '
@@ -59,6 +58,8 @@ try_to_fix() {
   case $choicee in
       1)
           screen -S "${session}" -p 0 -X stuff "^C"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "rustup target add riscv32i-unknown-none-elf"
           sleep 1
           screen -S "${session}" -p 0 -X stuff "cd $HOME/.nexus/network-api/clients/cli/"
           sleep 1
