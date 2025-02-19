@@ -53,6 +53,7 @@ try_to_fix() {
   echo "Выберите пункт:"
   echo "1) Первый способ"
   echo "2) Второй способ"
+  echo "3) Третий способ"
   read -p "Введите номер пункта: " choicee
 
   case $choicee in
@@ -72,8 +73,23 @@ try_to_fix() {
           screen -S "${session}" -p 0 -X stuff "~/.nexus/network-api/clients/cli/target/release/nexus-network --start"
           echo 'Проверяйте ваши логи.'
           ;;
+      3)
+          screen -S "${session}" -p 0 -X stuff "^C"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "cd $HOME/.nexus/network-api/clients/cli/"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "rm build.rs"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "wget https://raw.githubusercontent.com/londrwus/network-api/refs/heads/main/clients/cli/build.rs"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "rustup target add riscv32i-unknown-none-elf"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "cd $HOME/.nexus/network-api/clients/cli/"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "cargo run --release -- --start --beta"
+          echo 'Проверяйте ваши логи.'
       *)
-          echo "Некорректный ввод. Пожалуйста, выберите 1 или 2."
+          echo "Некорректный ввод. Пожалуйста, выберите верные пункты."
           ;;
   esac
 }
