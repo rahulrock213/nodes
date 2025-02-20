@@ -30,6 +30,11 @@ download_node() {
 
   rustup target add riscv32i-unknown-none-elf
 
+  PROTOC_VERSION=29.1
+  curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOC_VERSION/protoc-$PROTOC_VERSION-linux-x86_64.zip
+  unzip protoc-$PROTOC_VERSION-linux-x86_64.zip -d /usr/local
+  export PATH="/usr/local/bin:$PATH"
+
   mkdir -p $HOME/.config/cli
 
   screen -dmS nexusnode bash -c '
@@ -112,6 +117,16 @@ try_to_fix() {
   esac
 }
 
+make_swap() {
+  sudo fallocate -l 10G /swapfile
+  sudo chmod 600 /swapfile
+  sudo mkswap /swapfile
+  sudo swapon /swapfile
+  echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+  echo 'Swap был поставлен.'
+}
+
 restart_node() {
   echo 'Начинаю перезагрузку...'
 
@@ -145,9 +160,10 @@ while true; do
     echo "2. 📂 Перейти в ноду (выйти CTRL+A D)"
     echo "3. 📜 Посмотреть логи"
     echo "4. 😤 Попытаться исправить ошибки"
-    echo "5. 🔄 Перезапустить ноду"
-    echo "6. ❌ Удалить ноду"
-    echo -e "7. 🚪 Выйти из скрипта\n"
+    echo "5. 🤺 Поставить SWAP"
+    echo "6. 🔄 Перезапустить ноду"
+    echo "7. ❌ Удалить ноду"
+    echo -e "8. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -164,12 +180,15 @@ while true; do
         try_to_fix
         ;;
       5)
-        restart_node
+        make_swap
         ;;
       6)
-        delete_node
+        restart_node
         ;;
       7)
+        delete_node
+        ;;
+      8)
         exit_from_script
         ;;
       *)
