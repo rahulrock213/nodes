@@ -10,6 +10,9 @@ channel_logo() {
 download_node() {
   echo 'Начинаю установку...'
 
+  sudo apt update -y && sudo apt upgrade -y
+  sudo apt-get install nano screen cargo unzip build-essential pkg-config libssl-dev git-all protobuf-compiler jq make software-properties-common ca-certificates curl
+
   if [ -d "$HOME/.nexus" ]; then
     sudo rm -rf "$HOME/.nexus"
   fi
@@ -17,9 +20,6 @@ download_node() {
   if screen -list | grep -q "nexusnode"; then
       screen -S nexusnode -X quit
   fi
-
-  sudo apt update -y && sudo apt upgrade -y
-  sudo apt-get install nano screen cargo unzip build-essential pkg-config libssl-dev git-all protobuf-compiler jq make software-properties-common ca-certificates curl
 
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
