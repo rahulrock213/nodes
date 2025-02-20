@@ -19,7 +19,7 @@ download_node() {
   fi
 
   sudo apt update -y && sudo apt upgrade -y
-  sudo apt-get install nano screen cargo build-essential pkg-config libssl-dev git-all protobuf-compiler jq make software-properties-common ca-certificates curl
+  sudo apt-get install nano screen cargo unzip build-essential pkg-config libssl-dev git-all protobuf-compiler jq make software-properties-common ca-certificates curl
 
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
@@ -54,6 +54,7 @@ try_to_fix() {
   echo "1) Первый способ"
   echo "2) Второй способ"
   echo "3) Третий способ"
+  echo "4) Четвертый способ"
   read -p "Введите номер пункта: " choicee
 
   case $choicee in
@@ -87,6 +88,18 @@ try_to_fix() {
           screen -S "${session}" -p 0 -X stuff "cd $HOME/.nexus/network-api/clients/cli/"
           sleep 1
           screen -S "${session}" -p 0 -X stuff "cargo run --release -- --start --beta"
+          echo 'Проверяйте ваши логи.'
+          ;;
+      4)
+          screen -S "${session}" -p 0 -X stuff "sudo apt update -y"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "https://github.com/protocolbuffers/protobuf/releases/download/v29.1/protoc-29.1-linux-x86_64.zip"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "unzip protoc-29.1-linux-x86_64.zip -d /usr/local"
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "export PATH="/usr/local/bin:$PATH""
+          sleep 1
+          screen -S "${session}" -p 0 -X stuff "sudo curl https://cli.nexus.xyz/ | sh"
           echo 'Проверяйте ваши логи.'
           ;;
       *)
