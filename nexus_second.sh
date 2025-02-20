@@ -50,6 +50,8 @@ check_logs() {
 }
 
 try_to_fix() {
+  session="nexusnode"
+
   echo "Выберите пункт:"
   echo "1) Первый способ"
   echo "2) Второй способ"
