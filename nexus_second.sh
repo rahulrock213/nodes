@@ -28,6 +28,8 @@ download_node() {
   source ~/.bashrc
   rustup update
 
+  rustup target add riscv32i-unknown-none-elf
+
   mkdir -p $HOME/.config/cli
 
   screen -dmS nexusnode bash -c '
