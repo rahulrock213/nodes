@@ -159,10 +159,50 @@ deploy_smart() {
 
   cd Nexus_Deploy_Smartcontract
 
-  read -s -p "Введите приватный ключ от кошелька на Nexus: " PRIVATE_KEY
+  read -s -p "Введите приватный ключ от кошелька на Nexus (если что его тут не будет видно): " PRIVATE_KEY
   sed -i "s|PRIVATE_KEY=.*|PRIVATE_KEY=$PRIVATE_KEY|" .env
 
   npm install dotenv ethers solc chalk ora cfonts readline-sync
+
+  node index.js
+}
+
+make_transaction() {
+  if ! command -v npm &> /dev/null
+  then
+      echo "npm не установлен. Устанавливаем npm 10.8.2..."
+      
+      if ! command -v nvm &> /dev/null
+      then
+          echo "Устанавливаем nvm..."
+          curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      fi
+      
+      nvm install 20.5.1
+      nvm use 20.5.1
+      
+      npm install -g npm@10.8.2
+      echo "npm 10.8.2 успешно установлен."
+  else
+      echo "Npm уже установлен."
+  fi
+
+  cd $HOME
+
+  if [ -d "$HOME/Nexus_Make_Transaction" ]; then
+    sudo rm -rf "$HOME/Nexus_Make_Transaction"
+  fi
+
+  git clone https://github.com/londrwus/Nexus_Make_Transaction.git
+
+  cd Nexus_Make_Transaction
+
+  read -s -p "Введите приватный ключ от кошелька на Nexus (если что его тут не будет видно): " PRIVATE_KEY
+  sed -i "s|PRIVATE_KEY=.*|PRIVATE_KEY=$PRIVATE_KEY|" .env
+
+  npm install dotenv ethers readline cfonts chalk
 
   node index.js
 }
@@ -202,9 +242,10 @@ while true; do
     echo "4. 😤 Попытаться исправить ошибки"
     echo "5. 🤺 Поставить SWAP"
     echo "6. 📱 Деплой смарт контракта"
-    echo "7. 🔄 Перезапустить ноду"
-    echo "8. ❌ Удалить ноду"
-    echo -e "9. 🚪 Выйти из скрипта\n"
+    echo "7. ✈️ Сделать транзакцию"
+    echo "8. 🔄 Перезапустить ноду"
+    echo "9. ❌ Удалить ноду"
+    echo -e "10. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -227,12 +268,15 @@ while true; do
         deploy_smart
         ;;
       7)
-        restart_node
+        make_transaction
         ;;
       8)
-        delete_node
+        restart_node
         ;;
       9)
+        delete_node
+        ;;
+      10)
         exit_from_script
         ;;
       *)
