@@ -18,7 +18,7 @@ download_node() {
   fi
 
   if screen -list | grep -q "nexusnode"; then
-      screen -S nexusnode -X quit
+    screen -S nexusnode -X quit
   fi
 
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -127,6 +127,46 @@ make_swap() {
   echo 'Swap был поставлен.'
 }
 
+deploy_smart() {
+  if ! command -v npm &> /dev/null
+  then
+      echo "npm не установлен. Устанавливаем npm 10.8.2..."
+      
+      if ! command -v nvm &> /dev/null
+      then
+          echo "Устанавливаем nvm..."
+          curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      fi
+      
+      nvm install 20.5.1
+      nvm use 20.5.1
+      
+      npm install -g npm@10.8.2
+      echo "npm 10.8.2 успешно установлен."
+  else
+      echo "Npm уже установлен."
+  fi
+
+  cd $HOME
+
+  if [ -d "$HOME/Nexus_Deploy_Smartcontract" ]; then
+    sudo rm -rf "$HOME/Nexus_Deploy_Smartcontract"
+  fi
+
+  git clone https://github.com/londrwus/Nexus_Deploy_Smartcontract.git
+
+  cd Nexus_Deploy_Smartcontract
+
+  read -s -p "Введите приватный ключ от кошелька на Nexus: " PRIVATE_KEY
+  sed -i "s|PRIVATE_KEY=.*|PRIVATE_KEY=$PRIVATE_KEY|" .env
+
+  npm install dotenv ethers solc chalk ora cfonts readline-sync
+
+  node index.js
+}
+
 restart_node() {
   echo 'Начинаю перезагрузку...'
 
@@ -161,9 +201,10 @@ while true; do
     echo "3. 📜 Посмотреть логи"
     echo "4. 😤 Попытаться исправить ошибки"
     echo "5. 🤺 Поставить SWAP"
-    echo "6. 🔄 Перезапустить ноду"
-    echo "7. ❌ Удалить ноду"
-    echo -e "8. 🚪 Выйти из скрипта\n"
+    echo "6. 📱 Деплой смарт контракта"
+    echo "7. 🔄 Перезапустить ноду"
+    echo "8. ❌ Удалить ноду"
+    echo -e "9. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -183,12 +224,15 @@ while true; do
         make_swap
         ;;
       6)
-        restart_node
+        deploy_smart
         ;;
       7)
-        delete_node
+        restart_node
         ;;
       8)
+        delete_node
+        ;;
+      9)
         exit_from_script
         ;;
       *)
