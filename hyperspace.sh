@@ -18,7 +18,7 @@ download_node() {
   cd $HOME
 
   sudo apt-get update -y && sudo apt-get upgrade -y
-  sudo apt-get install wget make tar screen nano libssl3-dev build-essential unzip lz4 gcc git jq -y
+  sudo apt-get install wget make tar screen nano build-essential unzip lz4 gcc git jq -y
 
   if [ -d "$HOME/.aios" ]; then
     sudo rm -rf "$HOME/.aios"
@@ -85,8 +85,59 @@ check_points() {
   aios-cli hive points
 }
 
+start_points_monitor() {
+    echo "Запускаем проверку поинтов..."
+
+    PIDS=$(ps aux | grep "[p]oints_monitor_hyperspace.sh" | awk '{print $2}')
+
+    for PID in $PIDS; do
+        kill -9 $PID
+        echo "Процесс с PID $PID завершен"
+    done
+
+    cat > $HOME/points_monitor_hyperspace.sh << 'EOL'
+#!/bin/bash
+LOG_FILE="$HOME/aios-cli.log"
+SCREEN_NAME="hyperspacenode"
+LAST_POINTS="0"
+
+while true; do
+    CURRENT_POINTS=$(aios-cli hive points | grep "Points:" | awk '{print $2}')
+    
+    # Если оба значения NaN или равны численно
+    if [ "$CURRENT_POINTS" = "$LAST_POINTS" ] || { [ "$CURRENT_POINTS" != "NaN" ] && [ "$LAST_POINTS" != "NaN" ] && [ "$CURRENT_POINTS" -eq "$LAST_POINTS" ]; }; then
+        echo "$(date): Поинты не были начислены (Текущее: $CURRENT_POINTS, Предыдущее: $LAST_POINTS), сервис перезапускается..." >> $HOME/points_monitor_hyperspace.log
+        
+        # Перезапуск сервиса
+        screen -S "$SCREEN_NAME" -X stuff $'\003'
+        sleep 5
+        screen -S "$SCREEN_NAME" -X stuff "aios-cli kill\n"
+        sleep 5
+        screen -S "$SCREEN_NAME" -X stuff "aios-cli start --connect"
+    fi
+    
+    LAST_POINTS="$CURRENT_POINTS"
+    
+    sleep 10800
+done
+EOL
+
+    chmod +x $HOME/points_monitor_hyperspace.sh
+
+    nohup $HOME/points_monitor_hyperspace.sh > $HOME/points_monitor_hyperspace.log 2>&1 &
+
+    echo 'Проверка поинтов была запущена.'
+}
+
 restart_node() {
   session="hyperspacenode"
+
+  PIDS=$(ps aux | grep "[p]oints_monitor_hyperspace.sh" | awk '{print $2}')
+    
+  for PID in $PIDS; do
+    kill -9 $PID
+    echo "Процесс с PID $PID завершен"
+  done
   
   if screen -list | grep -q "\.${session}"; then
     screen -S "${session}" -p 0 -X stuff "^C"
@@ -102,6 +153,13 @@ delete_node() {
   read -p 'Если уверены удалить ноду, введите любую букву (CTRL+C чтобы выйти): ' checkjust
 
   echo 'Начинаю удалять ноду...'
+
+  PIDS=$(ps aux | grep "[p]oints_monitor_hyperspace.sh" | awk '{print $2}')
+    
+  for PID in $PIDS; do
+    kill -9 $PID
+    echo "Процесс с PID $PID завершен"
+  done
 
   screen -S hyperspacenode -X quit
   aios-cli kill
@@ -122,9 +180,10 @@ while true; do
     echo "1. 🙂 Установить ноду"
     echo "2. 📜 Посмотреть логи"
     echo "3. ⭐ Узнать сколько поинтов"
-    echo "4. 🔄 Перезагрузить ноду"
-    echo "5. 🗑️ Удалить ноду"
-    echo -e "6. 🚪 Выйти из скрипта\n"
+    echo "4. ✅ Автоматическая проверка поинтов"
+    echo "5. 🔄 Перезагрузить ноду"
+    echo "6. 🗑️ Удалить ноду"
+    echo -e "7. 🚪 Выйти из скрипта\n"
     read -p "Выберите пункт меню: " choice
 
     case $choice in
@@ -138,12 +197,15 @@ while true; do
         check_points
         ;;
       4)
-        restart_node
+        start_points_monitor
         ;;
       5)
-        delete_node
+        restart_node
         ;;
       6)
+        delete_node
+        ;;
+      7)
         exit_from_script
         ;;
       *)
