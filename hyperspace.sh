@@ -104,11 +104,9 @@ LAST_POINTS="0"
 while true; do
     CURRENT_POINTS=$(aios-cli hive points | grep "Points:" | awk '{print $2}')
     
-    # Если оба значения NaN или равны численно
     if [ "$CURRENT_POINTS" = "$LAST_POINTS" ] || { [ "$CURRENT_POINTS" != "NaN" ] && [ "$LAST_POINTS" != "NaN" ] && [ "$CURRENT_POINTS" -eq "$LAST_POINTS" ]; }; then
         echo "$(date): Поинты не были начислены (Текущее: $CURRENT_POINTS, Предыдущее: $LAST_POINTS), сервис перезапускается..." >> $HOME/points_monitor_hyperspace.log
         
-        # Перезапуск сервиса
         screen -S "$SCREEN_NAME" -X stuff $'\003'
         sleep 5
         screen -S "$SCREEN_NAME" -X stuff "aios-cli kill\n"
