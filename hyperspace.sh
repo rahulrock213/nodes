@@ -18,7 +18,7 @@ download_node() {
   cd $HOME
 
   sudo apt-get update -y && sudo apt-get upgrade -y
-  sudo apt-get install wget make tar screen nano build-essential unzip lz4 gcc git jq -y
+  sudo apt-get install wget make tar screen nano libssl3-dev build-essential unzip lz4 gcc git jq -y
 
   if [ -d "$HOME/.aios" ]; then
     sudo rm -rf "$HOME/.aios"
