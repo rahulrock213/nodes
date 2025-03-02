@@ -20,6 +20,23 @@ download_node() {
   sudo apt-get update -y && sudo apt-get upgrade -y
   sudo apt-get install wget make tar screen nano libssl3-dev build-essential unzip lz4 gcc git jq -y
 
+  packages="wget make tar screen nano libssl3-dev build-essential unzip lz4 gcc git jq"
+
+  check_and_install() {
+    if ! dpkg -s "$1" >/dev/null 2>&1; then
+      sudo apt-get install "$1" -y
+    fi
+  }
+
+  for package in $packages; do
+    check_and_install "$package"
+  done
+
+  if [ -d "$HOME/.aios" ]; then
+    sudo rm -rf "$HOME/.aios"
+    aios-cli kill
+  fi
+
   if [ -d "$HOME/.aios" ]; then
     sudo rm -rf "$HOME/.aios"
     aios-cli kill
