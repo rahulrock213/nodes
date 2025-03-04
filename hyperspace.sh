@@ -145,6 +145,8 @@ EOL
 }
 
 restart_node() {
+  cd $HOME
+
   session="hyperspacenode"
 
   PIDS=$(ps aux | grep "[p]oints_monitor_hyperspace.sh" | awk '{print $2}')
