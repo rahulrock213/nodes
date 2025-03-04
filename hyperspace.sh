@@ -169,6 +169,10 @@ restart_node() {
 
       exec bash
     '
+
+    aios-cli hive import-keys $HOME/my.pem
+    aios-cli hive login
+    aios-cli hive connect
   fi
 }
 
