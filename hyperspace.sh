@@ -161,6 +161,14 @@ restart_node() {
     echo "Нода была перезагружена."
   else
     echo "Сессия ${session} не найдена."
+
+    screen -dmS hyperspacenode bash -c '
+      echo "Начало выполнения скрипта в screen-сессии"
+
+      aios-cli start
+
+      exec bash
+    '
   fi
 }
 
