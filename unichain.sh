@@ -1,10 +1,10 @@
 channel_logo() {
   echo -e '\033[0;31m'
-  echo -e 'â”Œâ” â”Œâ”€â”â”Œâ”€â”â”Œâ”€â”â”Œâ”¬â”â”¬â”¬ â”¬  â”Œâ”€â”â”¬ â”¬â”Œâ” â”¬â”¬  '
-  echo -e 'â”œâ”´â”â”‚ â”‚â”‚ â”¬â”œâ”€â”¤ â”‚ â”‚â””â”¬â”˜  â””â”€â”â””â”¬â”˜â”œâ”´â”â”‚â”‚  '
-  echo -e 'â””â”€â”˜â””â”€â”˜â””â”€â”˜â”´ â”´ â”´ â”´ â”´   â””â”€â”˜ â”´ â””â”€â”˜â”´â”´â”€â”˜'
+  echo -e '┌┐ ┌─┐┌─┐┌─┐┌┬┐┬┬ ┬  ┌─┐┬ ┬┌┐ ┬┬  '
+  echo -e '├┴┐│ ││ ┬├─┤ │ │└┬┘  └─┐└┬┘├┴┐││  '
+  echo -e '└─┘└─┘└─┘┴ ┴ ┴ ┴ ┴   └─┘ ┴ └─┘┴┴─┘'
   echo -e '\e[0m'
-  echo -e "\n\nSubscribe to the most 4ekHyTbIu* crypto channel @bogatiy_sybil [ðŸ’¸]"
+  echo -e "\n\nSubscribe to the most 4ekHyTbIu* crypto channel @bogatiy_sybil [💸]"
 }
 
 download_node() {
@@ -121,15 +121,15 @@ while true; do
     channel_logo
     sleep 2
     echo -e "\n\nMenu:"
-    echo "1. ðŸš€ Install node"
-    echo "2. ðŸ”„ Restart node"
-    echo "3. ðŸ•µï¸ Check node"
-    echo "4. ðŸ“‹ View Unichain logs (OP)"
-    echo "5. ðŸ“œ View Unichain logs"
-    echo "6. ðŸ›‘ Stop node"
-    echo "7. ðŸ†™ Update node"
-    echo "8. ðŸ”‘ View private key"
-    echo -e "9. ðŸšª Exit script\n"
+    echo "1. 🚀 Install node"
+    echo "2. 🔄 Restart node"
+    echo "3. 🕵️ Check node"
+    echo "4. 📋 View Unichain logs (OP)"
+    echo "5. 📜 View Unichain logs"
+    echo "6. 🛑 Stop node"
+    echo "7. 🆙 Update node"
+    echo "8. 🔑 View private key"
+    echo -e "9. 🚪 Exit script\n"
     read -p "Select a menu option: " choice
 
     case $choice in
