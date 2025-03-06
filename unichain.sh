@@ -1,14 +1,14 @@
 channel_logo() {
   echo -e '\033[0;31m'
-  echo -e '┌┐ ┌─┐┌─┐┌─┐┌┬┐┬┬ ┬  ┌─┐┬ ┬┌┐ ┬┬  '
-  echo -e '├┴┐│ ││ ┬├─┤ │ │└┬┘  └─┐└┬┘├┴┐││  '
-  echo -e '└─┘└─┘└─┘┴ ┴ ┴ ┴ ┴   └─┘ ┴ └─┘┴┴─┘'
+  echo -e 'â”Œâ” â”Œâ”€â”â”Œâ”€â”â”Œâ”€â”â”Œâ”¬â”â”¬â”¬ â”¬  â”Œâ”€â”â”¬ â”¬â”Œâ” â”¬â”¬  '
+  echo -e 'â”œâ”´â”â”‚ â”‚â”‚ â”¬â”œâ”€â”¤ â”‚ â”‚â””â”¬â”˜  â””â”€â”â””â”¬â”˜â”œâ”´â”â”‚â”‚  '
+  echo -e 'â””â”€â”˜â””â”€â”˜â””â”€â”˜â”´ â”´ â”´ â”´ â”´   â””â”€â”˜ â”´ â””â”€â”˜â”´â”´â”€â”˜'
   echo -e '\e[0m'
-  echo -e "\n\nПодпишись на самый 4ekHyTbIu* канал в крипте @bogatiy_sybil [💸]"
+  echo -e "\n\nSubscribe to the most 4ekHyTbIu* crypto channel @bogatiy_sybil [ðŸ’¸]"
 }
 
 download_node() {
-  echo 'Начинаю установку...'
+  echo 'Starting installation...'
 
   sudo apt update -y && sudo apt upgrade -y
   sudo apt-get install make build-essential unzip lz4 gcc git jq -y
@@ -22,7 +22,7 @@ download_node() {
   sudo chmod +x /usr/local/bin/docker-compose
 
   git clone https://github.com/Uniswap/unichain-node
-  cd unichain-node || { echo -e "Не получилось зайти в директорию"; return; }
+  cd unichain-node || { echo -e "Failed to enter directory"; return; }
 
   sed -i '/^[[:space:]]*#.*\.env\.mainnet/s/^[[:space:]]*#/ /' docker-compose.yml
 
@@ -34,7 +34,7 @@ restart_node() {
   sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" down
   sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" up -d
 
-  echo 'Unichain был перезагружен'
+  echo 'Unichain has been restarted'
 }
 
 check_node() {
@@ -76,10 +76,10 @@ update_node() {
   GETH_PRIV_KEY=$(cat $HOME/unichain-node/geth-data/geth/nodekey)
 
   if [ -z "$P2P_PRIV_KEY" ] || [ -z "$GETH_PRIV_KEY" ]; then
-    echo "Один из приватников пустой. Выходим..."
+    echo "One of the private keys is empty. Exiting..."
     exit 1
   else
-    echo "Продолжаем."
+    echo "Continuing."
   fi
 
   sudo rm -rf unichain-node/
@@ -104,13 +104,13 @@ update_node() {
 
   sudo docker-compose -f "${HOMEDIR}/unichain-node/docker-compose.yml" up -d
 
-  echo 'Нода была обновлена и запущенеа.'
+  echo 'The node has been updated and started.'
 }
 
 display_private_key() {
   cd $HOME
-  echo -e 'Ваш приватник GETH: \n' && cat unichain-node/geth-data/geth/nodekey
-  echo -e 'Ваш приватник OP-NODE: \n' && cat unichain-node/opnode-data/opnode_p2p_priv.txt
+  echo -e 'Your GETH private key: \n' && cat unichain-node/geth-data/geth/nodekey
+  echo -e 'Your OP-NODE private key: \n' && cat unichain-node/opnode-data/opnode_p2p_priv.txt
 }
 
 exit_from_script() {
@@ -120,17 +120,17 @@ exit_from_script() {
 while true; do
     channel_logo
     sleep 2
-    echo -e "\n\nМеню:"
-    echo "1. 🚀 Установить ноду"
-    echo "2. 🔄 Перезагрузить ноду"
-    echo "3. 🕵️ Проверить ноду"
-    echo "4. 📋 Посмотреть логи Unichain (OP)"
-    echo "5. 📜 Посмотреть логи Unichain"
-    echo "6. 🛑 Остановить ноду"
-    echo "7. 🆙 Обновить ноду"
-    echo "8. 🔑 Посмотреть приватный ключ"
-    echo -e "9. 🚪 Выйти из скрипта\n"
-    read -p "Выберите пункт меню: " choice
+    echo -e "\n\nMenu:"
+    echo "1. ðŸš€ Install node"
+    echo "2. ðŸ”„ Restart node"
+    echo "3. ðŸ•µï¸ Check node"
+    echo "4. ðŸ“‹ View Unichain logs (OP)"
+    echo "5. ðŸ“œ View Unichain logs"
+    echo "6. ðŸ›‘ Stop node"
+    echo "7. ðŸ†™ Update node"
+    echo "8. ðŸ”‘ View private key"
+    echo -e "9. ðŸšª Exit script\n"
+    read -p "Select a menu option: " choice
 
     case $choice in
       1)
@@ -161,7 +161,7 @@ while true; do
         exit_from_script
         ;;
       *)
-        echo "Неверный пункт. Пожалуйста, выберите правильную цифру в меню."
+        echo "Invalid option. Please select a valid number from the menu."
         ;;
     esac
   done
